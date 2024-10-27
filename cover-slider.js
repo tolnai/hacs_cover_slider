@@ -446,9 +446,9 @@ class CoverSliderCardEditor extends LitElement {
       case 'name':
         return 'Name';
       case 'step':
-        return 'Step (default: 5)';
+        return 'Slider step size (default: 5)';
       case 'invert':
-        return 'Invert?';
+        return 'Invert position?';
     }
     return e.name;
   }

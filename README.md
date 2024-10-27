@@ -22,11 +22,12 @@ The card has a visual editor, but all configuration options are detailed below.
 
 ## Entity options
 
-| Name   | Type   | Default       | Description                                                             |
-| ------ | ------ | ------------- | ----------------------------------------------------------------------- |
-| entity | entity | **Required**  | Cover entity                                                            |
-| name   | string | entity's name | Show this name instead entity's name                                    |
-| step   | number | 5             | Slider step (with 5, position can be set in 5 increments between 0-100) |
+| Name   | Type    | Default       | Description                                                             |
+| ------ | ------- | ------------- | ----------------------------------------------------------------------- |
+| entity | entity  | **Required**  | Cover entity                                                            |
+| name   | string  | entity's name | Show this name instead entity's name                                    |
+| step   | number  | 5             | Slider step (with 5, position can be set in 5 increments between 0-100) |
+| invert | boolean | false         | Inverts 0/100 position values                                           |
 
 ## Installation
 
