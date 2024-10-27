@@ -1,0 +1,21 @@
+{
+  "name": "hacs_cover_slider",
+  "version": "0.1.0",
+  "description": "Cover Slider card for Home Assistant",
+  "keywords": [
+    "home-assistant",
+    "homeassistant",
+    "hass",
+    "hacs",
+    "lovelace",
+    "custom-cards",
+    "cover"
+  ],
+  "module": "cover-slider.js",
+  "repository": "https://github.com/tolnai/hacs_cover_slider",
+  "author": "Gábor Tolnai",
+  "license": "MIT",
+  "dependencies": {
+    "lit-element": "^2.8.0"
+  }
+}
