@@ -56,16 +56,16 @@ entities:
 type: custom:cover-slider-card
 entities:
   - entity: cover.cover_1
-    name: 'South #1'
+    name: 'South 1'
     step: 10
   - entity: cover.cover_2
-    name: 'South #2'
+    name: 'South 2'
     step: 10
   - entity: cover.cover_3
-    name: 'West #1'
+    name: 'West 1'
     step: 10
   - entity: cover.cover_4
-    name: 'West #2'
+    name: 'West 2'
     step: 10
 hideNames: false
 hideDirections: false
