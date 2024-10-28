@@ -4,13 +4,18 @@
  * Description   : Cover slider card
  * Date          : 2024-10-28
  */
-console.info(
-  "%c Cover Slider Card  \n%c Version v0.1.2",
-  "color: orange; font-weight: bold; background: black",
-  "color: white; font-weight: bold; background: dimgray"
-);
-
 import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-element.js?module";
+
+const loadHaForm = async () => {
+  if (customElements.get("ha-form") && customElements.get("hui-entities-card-editor")) return;
+  if (window.loadCardHelpers) {
+    const helpers = await window.loadCardHelpers();
+    if (!helpers) return;
+    const card = await helpers.createCardElement({ type: "entities", entities: [] });
+    if (!card) return;
+    card.constructor.getConfigElement();
+  }
+};
 
 class CoverSliderCard extends LitElement {
   static get properties() {
@@ -404,15 +409,22 @@ class CoverSliderCard extends LitElement {
   }
 }
 
-customElements.define("cover-slider-card", CoverSliderCard);
-window.customCards = window.customCards || [];
-window.customCards.push({
-  type: "cover-slider-card",
-  name: "Cover Slider",
-  preview: false, // Optional - defaults to false
-  description: "A card showing sliders for cover entities",
-  documentationURL: "https://github.com/tolnai/hacs_cover_slider",
-});
+if (!customElements.get("cover-slider-card")) {
+  customElements.define("cover-slider-card", CoverSliderCard);
+  window.customCards = window.customCards || [];
+  window.customCards.push({
+    type: "cover-slider-card",
+    name: "Cover Slider",
+    preview: false, // Optional - defaults to false
+    description: "A card showing sliders for cover entities",
+    documentationURL: "https://github.com/tolnai/hacs_cover_slider",
+  });
+  console.info(
+    "%c Cover Slider Card  \n%c Version v0.1.3",
+    "color: orange; font-weight: bold; background: black",
+    "color: white; font-weight: bold; background: dimgray"
+  );
+}
 
 class CoverSliderCardEditor extends LitElement {
   // @query("hui-entities-card-row-editor")
@@ -427,6 +439,11 @@ class CoverSliderCardEditor extends LitElement {
       hass: {},
       _config: {},
     };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    loadHaForm();
   }
 
   setConfig(config) {
@@ -516,7 +533,7 @@ class CoverSliderCardEditor extends LitElement {
             name: "layout",
             label: "Button layout",
             selector: {
-              select: { options: ["full", "compact", "stop", "minimal"] },
+              select: { options: ["full", "compact", "stop", "minimal"], mode: "dropdown" },
             },
           },
           { name: "hideNames", label: "Hide names?", selector: { boolean: {} } },
@@ -549,7 +566,7 @@ class CoverSliderCardEditor extends LitElement {
       <div class="card-config">
         <div class="toolbar">
           <mwc-tab-bar .activeIndex=${this._selectedTab} @MDCTabBar:activated=${this._handleSwitchTab}>
-            <mwc-tab .label=${"Entities"}></mwc-tab>
+            <mwc-tab .label=${"Cover Entities"}></mwc-tab>
             <mwc-tab .label=${"Visuals"}></mwc-tab>
           </mwc-tab-bar>
         </div>
@@ -559,4 +576,6 @@ class CoverSliderCardEditor extends LitElement {
   }
 }
 
-customElements.define("cover-slider-card-editor", CoverSliderCardEditor);
+if (!customElements.get("cover-slider-card-editor")) {
+  customElements.define("cover-slider-card-editor", CoverSliderCardEditor);
+}

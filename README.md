@@ -78,12 +78,6 @@ openColor:
 closedColor:
 ```
 
-## Known issues
-
-Currently known issues:
-
-- When opening the editor, it will not show the entity list, unless another editor has been opened which has an entity list visual editor. The component has to be loaded, but I didn't figure out yet, how to do that. 🙈
-
 ## Credits
 
 Inspired by [Vertical Slider Cover Card](https://github.com/konnectedvn/lovelace-vertical-slider-cover-card) by [konnectedvn](https://github.com/konnectedvn).
