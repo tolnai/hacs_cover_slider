@@ -2,19 +2,15 @@
  * Author        : Gabor Tolnai
  * Github        : https://github.com/tolnai/hacs_cover_slider
  * Description   : Cover slider card
- * Date          : 2024-10-27
+ * Date          : 2024-10-28
  */
 console.info(
-  '%c Cover Slider Card  \n%c Version v0.1.0',
-  'color: orange; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray'
+  "%c Cover Slider Card  \n%c Version v0.1.2",
+  "color: orange; font-weight: bold; background: black",
+  "color: white; font-weight: bold; background: dimgray"
 );
 
-import {
-  LitElement,
-  html,
-  css,
-} from 'https://unpkg.com/lit-element@2.0.1/lit-element.js?module';
+import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-element.js?module";
 
 class CoverSliderCard extends LitElement {
   static get properties() {
@@ -24,146 +20,37 @@ class CoverSliderCard extends LitElement {
     };
   }
 
-  render() {
-    var sliderWidth =
-      this.config.sliderWidth && this.config.sliderWidth >= 10
-        ? `${this.config.sliderWidth}px`
-        : '40px';
-    var sliderHeight =
-      this.config.sliderHeight && this.config.sliderHeight >= 30
-        ? `${this.config.sliderHeight}px`
-        : '200px';
-    var hideNames = this.config.hideNames ? this.config.hideNames : false;
-    var hideDirections = this.config.hideDirections
-      ? this.config.hideDirections
-      : false;
-    var hideStop = this.config.hideStop ? this.config.hideStop : false;
+  static getConfigElement() {
+    return document.createElement("cover-slider-card-editor");
+  }
 
-    var closedColor = this.config.closedColor
-      ? this.config.closedColor
-      : 'hsl(0, 0%, 20%)';
-    var openColor = this.config.openColor
-      ? this.config.openColor
-      : 'hsl(0, 0%, 90%, 0.6)';
-    var titleSize = this.config.titleSize ? this.config.titleSize : '14px';
+  static getStubConfig() {
+    return { entities: [] };
+  }
 
-    return html`
-      <ha-card>
-        <div class="page">
-          <div class="main">
-            <div class="inner-main">
-              ${this.config.entities.length === 0
-                ? html` You need to define entities `
-                : ''}
-              ${this.config.entities.map((ent) => {
-                var step = ent.step ? ent.step : 5;
-                const stateObj = this.hass.states[ent.entity];
-                return stateObj
-                  ? html`
-                      <div
-                        class="cover"
-                        style="--cover-width:30;--center-slider:30;"
-                      >
-                        <div
-                          class="cover-slider"
-                          style="display: flex; flex-direction: column; align-items: center;"
-                        >
-                          <p
-                            class="cover-name"
-                            style="display: ${hideNames
-                              ? 'none'
-                              : 'block'};--cover-fontSize: ${titleSize};"
-                            @click=${(e) =>
-                              this._openEntity(stateObj.entity_id)}
-                          >
-                            ${ent.name || stateObj.attributes.friendly_name}
-                          </p>
-                          <div
-                            class="toggle"
-                            style="display: ${hideDirections
-                              ? 'none'
-                              : 'block'};margin: 0;"
-                          >
-                            <ha-icon-button
-                              label="Up"
-                              @click=${(e) => this._coverOpen(ent, stateObj)}
-                              style="display: block"
-                            >
-                              <ha-icon icon="mdi:arrow-up"></ha-icon>
-                            </ha-icon-button>
-                          </div>
-                          <div
-                            class="range-holder"
-                            style="--slider-height: ${sliderHeight};--closed-color: ${closedColor};"
-                          >
-                            <input
-                              type="range"
-                              class="${stateObj.state}"
-                              step="${step}"
-                              style="--slider-width: ${sliderWidth};--slider-height: ${sliderHeight};--closed-color: ${closedColor};--open-color: ${openColor};"
-                              .value="${stateObj.state === 'closed'
-                                ? ent.invert
-                                  ? 100
-                                  : 0
-                                : ent.invert
-                                ? 100 -
-                                  Math.round(
-                                    stateObj.attributes.current_position
-                                  )
-                                : Math.round(
-                                    stateObj.attributes.current_position
-                                  )}"
-                              @input="${(e) =>
-                                this._sliderChange(
-                                  e.target.value,
-                                  stateObj.entity_id
-                                )}}"
-                              @change=${(e) =>
-                                this._setPosition(
-                                  ent,
-                                  stateObj.entity_id,
-                                  e.target.value
-                                )}
-                            />
-                          </div>
-                          <div
-                            class="toggle"
-                            style="display: ${hideDirections
-                              ? 'none'
-                              : 'block'};margin: 0;"
-                          >
-                            <ha-icon-button
-                              label="Down"
-                              @click=${(e) => this._coverClose(ent, stateObj)}
-                              style="display: block"
-                            >
-                              <ha-icon icon="mdi:arrow-down"></ha-icon>
-                            </ha-icon-button>
-                          </div>
-                          <div
-                            class="toggle"
-                            style="display: ${hideStop
-                              ? 'none'
-                              : 'block'};margin: 0;"
-                          >
-                            <ha-icon-button
-                              label="Stop"
-                              @click=${(e) => this._coverStop(stateObj)}
-                              style="display: block"
-                            >
-                              <ha-icon icon="mdi:stop"></ha-icon>
-                            </ha-icon-button>
-                          </div>
-                        </div>
-                      </div>
-                    `
-                  : html``;
-              })}
-            </div>
-          </div>
-        </div>
-      </ha-card>
-    `;
+  setConfig(config) {
+    if (!config.entities) {
+      throw new Error("You need to define entities.");
+    }
+    config.entities.forEach((entity, i) => {
+      if (entity.entity === undefined) {
+        throw new Error(`Entity ${i + 1} is invalid! Must be an object, having an entity key.`);
+      }
+    });
+    this.config = config;
+  }
+
+  getCardSize() {
+    return 3;
+  }
+
+  configChanged(newConfig) {
+    const event = new Event("config-changed", {
+      bubbles: true,
+      composed: true,
+    });
+    event.detail = { config: newConfig };
+    this.dispatchEvent(event);
   }
 
   _sliderChange(value, entity_id) {
@@ -175,13 +62,13 @@ class CoverSliderCard extends LitElement {
     if (this.hass.states[entity_id].attributes.current_position === value) {
       return;
     }
-    this.hass.callService('cover', 'set_cover_position', {
+    this.hass.callService("cover", "set_cover_position", {
       entity_id: entity_id,
       position: ent.invert ? 100 - value : value,
     });
-    this.sliderVal[entity_id]['active'] = false;
+    this.sliderVal[entity_id]["active"] = false;
     if (script) {
-      this.hass.callService('script', 'turn_on', {
+      this.hass.callService("script", "turn_on", {
         entity_id: ent.script,
       });
     }
@@ -189,26 +76,30 @@ class CoverSliderCard extends LitElement {
 
   _coverStop(state) {
     console.log(state);
-    this.hass.callService('cover', 'stop_cover', {
+    this.hass.callService("cover", "stop_cover", {
       entity_id: state.entity_id,
     });
   }
 
   _coverOpen(ent, state) {
-    this.hass.callService('cover', ent.invert ? 'close_cover' : 'open_cover', {
+    const action =
+      state.state === (ent.invert ? "closing" : "opening") ? "stop_cover" : ent.invert ? "close_cover" : "open_cover";
+    this.hass.callService("cover", action, {
       entity_id: state.entity_id,
     });
   }
 
   _coverClose(ent, state) {
-    this.hass.callService('cover', ent.invert ? 'open_cover' : 'close_cover', {
+    const action =
+      state.state === (ent.invert ? "opening" : "closing") ? "stop_cover" : ent.invert ? "open_cover" : "close_cover";
+    this.hass.callService("cover", action, {
       entity_id: state.entity_id,
     });
   }
 
   _openEntity(entityId) {
     console.log(entityId);
-    this._fire('hass-more-info', { entityId });
+    this._fire("hass-more-info", { entityId });
   }
 
   _fire(type, detail) {
@@ -220,44 +111,6 @@ class CoverSliderCard extends LitElement {
     e.detail = detail === null || detail === undefined ? {} : detail;
     this.dispatchEvent(e);
     return e;
-  }
-
-  static getConfigElement() {
-    return document.createElement('cover-slider-card-editor');
-  }
-
-  static getStubConfig() {
-    return { entities: [] };
-  }
-
-  setConfig(config) {
-    if (!config.entities) {
-      throw new Error('You need to define entities');
-    }
-    for (var i = 0, len = config.entities.length; i < len; i++) {
-      if (config.entities[i].entity === undefined) {
-        throw new Error(
-          config.entities[i] +
-            ' is INVALID! Should be object: - entity: ' +
-            config.entities[i] +
-            '.'
-        );
-      }
-    }
-    this.config = config;
-  }
-
-  getCardSize() {
-    return 3;
-  }
-
-  configChanged(newConfig) {
-    const event = new Event('config-changed', {
-      bubbles: true,
-      composed: true,
-    });
-    event.detail = { config: newConfig };
-    this.dispatchEvent(event);
   }
 
   static get styles() {
@@ -342,7 +195,7 @@ class CoverSliderCard extends LitElement {
         position: relative;
         display: block;
       }
-      .range-holder input[type='range'] {
+      .range-holder input[type="range"] {
         outline: 0;
         border: 0;
         border-radius: 4px;
@@ -362,14 +215,14 @@ class CoverSliderCard extends LitElement {
         top: calc(50% - (var(--slider-width) / 2));
         right: calc(50% - (var(--slider-height) / 2));
       }
-      .range-holder input[type='range']::-webkit-slider-runnable-track {
+      .range-holder input[type="range"]::-webkit-slider-runnable-track {
         height: var(--slider-width);
         -webkit-appearance: none;
         color: var(--open-color);
         margin-top: 0px;
         transition: box-shadow 0.2s ease-in-out;
       }
-      .range-holder input[type='range']::-webkit-slider-thumb {
+      .range-holder input[type="range"]::-webkit-slider-thumb {
         width: calc((var(--slider-width) / 5) + 2px);
         border-right: 4px solid var(--closed-color);
         border-left: 4px solid var(--closed-color);
@@ -379,8 +232,7 @@ class CoverSliderCard extends LitElement {
         height: var(--slider-width);
         cursor: ew-resize;
         background: var(--closed-color);
-        box-shadow: -350px 0 0 350px var(--open-color),
-          inset 0 0 0 80px var(--open-color);
+        box-shadow: -350px 0 0 350px var(--open-color), inset 0 0 0 80px var(--open-color);
         border-radius: 0;
         transition: box-shadow 0.2s ease-in-out;
         position: relative;
@@ -396,21 +248,177 @@ class CoverSliderCard extends LitElement {
       }
     `;
   }
+
+  _renderName(ent, stateObj) {
+    const hideNames = this.config.hideNames ? this.config.hideNames : false;
+    const titleSize = this.config.titleSize ? `${this.config.titleSize}px` : "14px";
+    return html`
+      <p
+        class="cover-name"
+        style="display: ${hideNames ? "none" : "block"};--cover-fontSize: ${titleSize};"
+        @click=${(e) => this._openEntity(stateObj.entity_id)}
+      >
+        ${ent.name || stateObj.attributes.friendly_name}
+      </p>
+    `;
+  }
+
+  _renderUpButton(ent, stateObj) {
+    const layout = this.config.layout ? this.config.layout : "full";
+    const ongoing = stateObj.state === (ent.invert ? "closing" : "opening");
+    switch (layout) {
+      case "full":
+        return html`
+          <div class="toggle" style="margin: 0;">
+            <ha-icon-button label="Up" @click=${() => this._coverOpen(ent, stateObj)} style="display: block">
+              <ha-icon icon="mdi:arrow-up"></ha-icon>
+            </ha-icon-button>
+          </div>
+        `;
+      case "compact":
+        return html`
+          <div class="toggle" style="margin: 0;">
+            <ha-icon-button
+              label="${ongoing ? "Stop" : "Up"}"
+              @click=${() => this._coverOpen(ent, stateObj)}
+              style="display: block"
+            >
+              <ha-icon icon="${ongoing ? "mdi:stop" : "mdi:arrow-up"}"></ha-icon>
+            </ha-icon-button>
+          </div>
+        `;
+      case "stop":
+      case "minimal":
+      default:
+        return html``;
+    }
+  }
+
+  _renderDownButton(ent, stateObj) {
+    const layout = this.config.layout ? this.config.layout : "full";
+    const ongoing = stateObj.state === (ent.invert ? "opening" : "closing");
+    switch (layout) {
+      case "full":
+        return html`
+          <div class="toggle" style="margin: 0;">
+            <ha-icon-button label="Down" @click=${() => this._coverClose(ent, stateObj)} style="display: block">
+              <ha-icon icon="mdi:arrow-down"></ha-icon>
+            </ha-icon-button>
+          </div>
+        `;
+      case "compact":
+        return html`
+          <div class="toggle" style="margin: 0;">
+            <ha-icon-button
+              label="${ongoing ? "Stop" : "Down"}"
+              @click=${() => this._coverClose(ent, stateObj)}
+              style="display: block"
+            >
+              <ha-icon icon="${ongoing ? "mdi:stop" : "mdi:arrow-down"}"></ha-icon>
+            </ha-icon-button>
+          </div>
+        `;
+      case "stop":
+      case "minimal":
+      default:
+        return html``;
+    }
+  }
+
+  _renderStopButton(stateObj) {
+    const layout = this.config.layout ? this.config.layout : "full";
+    switch (layout) {
+      case "full":
+      case "stop":
+        return html`
+          <div class="toggle" style="margin: 0;">
+            <ha-icon-button label="Stop" @click=${(e) => this._coverStop(stateObj)} style="display: block">
+              <ha-icon icon="mdi:stop"></ha-icon>
+            </ha-icon-button>
+          </div>
+        `;
+      case "compact":
+      case "minimal":
+      default:
+        return html``;
+    }
+  }
+
+  _renderSlider(ent, stateObj) {
+    const sliderWidth =
+      this.config.sliderWidth && this.config.sliderWidth >= 10 ? `${this.config.sliderWidth}px` : "40px";
+    const sliderHeight =
+      this.config.sliderHeight && this.config.sliderHeight >= 30 ? `${this.config.sliderHeight}px` : "200px";
+
+    const openColor = this.config.openColor ? this.config.openColor : "hsl(0, 0%, 90%, 0.6)";
+    const closedColor = this.config.closedColor ? this.config.closedColor : "hsl(0, 0%, 20%)";
+
+    const step = ent.step ? ent.step : 5;
+    return html`
+      <div class="range-holder" style="--slider-height: ${sliderHeight};--closed-color: ${closedColor};">
+        <input
+          type="range"
+          class="${stateObj.state}"
+          step="${step}"
+          style="--slider-width: ${sliderWidth};--slider-height: ${sliderHeight};--closed-color: ${closedColor};--open-color: ${openColor};"
+          .value="${stateObj.state === "closed"
+            ? ent.invert
+              ? 100
+              : 0
+            : ent.invert
+            ? 100 - Math.round(stateObj.attributes.current_position)
+            : Math.round(stateObj.attributes.current_position)}"
+          @input="${(e) => this._sliderChange(e.target.value, stateObj.entity_id)}}"
+          @change=${(e) => this._setPosition(ent, stateObj.entity_id, e.target.value)}
+        />
+      </div>
+    `;
+  }
+
+  render() {
+    return html`
+      <ha-card>
+        <div class="page">
+          <div class="main">
+            <div class="inner-main">
+              ${this.config.entities.length === 0 ? html` You need to define entities ` : ""}
+              ${this.config.entities.map((ent) => {
+                const stateObj = this.hass.states[ent.entity];
+                return stateObj
+                  ? html`
+                      <div class="cover" style="--cover-width:30;--center-slider:30;">
+                        <div class="cover-slider" style="display: flex; flex-direction: column; align-items: center;">
+                          ${this._renderName(ent, stateObj)} ${this._renderUpButton(ent, stateObj)}
+                          ${this._renderSlider(ent, stateObj)} ${this._renderDownButton(ent, stateObj)}
+                          ${this._renderStopButton(stateObj)}
+                        </div>
+                      </div>
+                    `
+                  : html``;
+              })}
+            </div>
+          </div>
+        </div>
+      </ha-card>
+    `;
+  }
 }
 
-customElements.define('cover-slider-card', CoverSliderCard);
+customElements.define("cover-slider-card", CoverSliderCard);
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: 'cover-slider-card',
-  name: 'Cover Slider',
+  type: "cover-slider-card",
+  name: "Cover Slider",
   preview: false, // Optional - defaults to false
-  description: 'A card showing sliders for cover entities',
-  documentationURL: 'https://github.com/tolnai/hacs_cover_slider',
+  description: "A card showing sliders for cover entities",
+  documentationURL: "https://github.com/tolnai/hacs_cover_slider",
 });
 
 class CoverSliderCardEditor extends LitElement {
   // @query("hui-entities-card-row-editor")
   // private _cardEditorEl?: HuiCardElementEditor;
+
+  _selectedTab = 0;
 
   _editingEntity = null;
 
@@ -430,30 +438,11 @@ class CoverSliderCardEditor extends LitElement {
   }
 
   _computeLabel(e) {
-    switch (e.name) {
-      case 'hideNames':
-        return 'Hide names?';
-      case 'hideDirections':
-        return 'Hide up/down buttons?';
-      case 'hideStop':
-        return 'Hide stop button?';
-      case 'sliderWidth':
-        return 'Slider width (default: 40)';
-      case 'sliderHeight':
-        return 'Slider height (default: 200)';
-      case 'entity':
-        return 'Entity';
-      case 'name':
-        return 'Name';
-      case 'step':
-        return 'Slider step size (default: 5)';
-      case 'invert':
-        return 'Invert position?';
-    }
-    return e.name;
+    return e.label || e.name;
   }
 
   _valuesChanged(ev) {
+    console.log(ev.detail);
     this._config = ev.detail.value;
     this._publishConfig();
   }
@@ -472,7 +461,7 @@ class CoverSliderCardEditor extends LitElement {
   }
 
   _publishConfig() {
-    const event = new CustomEvent('config-changed', {
+    const event = new CustomEvent("config-changed", {
       detail: { config: this._config },
       bubbles: true,
       composed: true,
@@ -480,49 +469,34 @@ class CoverSliderCardEditor extends LitElement {
     this.dispatchEvent(event);
   }
 
+  _handleSwitchTab(ev) {
+    this._selectedTab = parseInt(ev.detail.index, 10);
+  }
+
   _editDetails(ev) {
     this._editingEntity = ev.detail.subElementConfig;
   }
 
-  render() {
-    if (!this.hass || !this._config) {
-      return html``;
-    }
-
-    if (this._editingEntity !== null) {
-      return html`
-        <div>
-          <ha-icon-button-prev @click=${(e) => this._backClick(e)} /> Back
-        </div>
-        <ha-form
-          .hass=${this.hass}
-          .data=${this._editingEntity.elementConfig}
-          .schema=${[
-            { name: 'entity', selector: { entity: { domain: 'cover' } } },
-            { name: 'name', selector: { text: {} } },
-            { name: 'step', selector: { number: {} } },
-            { name: 'invert', selector: { boolean: {} } },
-          ]}
-          .computeLabel=${this._computeLabel}
-          @value-changed=${this._entityChanged}
-        ></ha-form>
-      `;
-    }
-
+  _renderEntityEditor() {
     return html`
+      <div><ha-icon-button-prev @click=${(e) => this._backClick(e)} /> Back</div>
       <ha-form
         .hass=${this.hass}
-        .data=${this._config}
+        .data=${this._editingEntity.elementConfig}
         .schema=${[
-          { name: 'hideNames', selector: { boolean: {} } },
-          { name: 'hideDirections', selector: { boolean: {} } },
-          { name: 'hideStop', selector: { boolean: {} } },
-          { name: 'sliderWidth', selector: { number: {} } },
-          { name: 'sliderHeight', selector: { number: {} } },
+          { name: "entity", label: "Entity", selector: { entity: { domain: "cover" } } },
+          { name: "name", label: "Name", selector: { text: {} } },
+          { name: "step", label: "Slider step size (default: 5)", selector: { number: {} } },
+          { name: "invert", label: "Invert position?", selector: { boolean: {} } },
         ]}
         .computeLabel=${this._computeLabel}
-        @value-changed=${this._valuesChanged}
+        @value-changed=${this._entityChanged}
       ></ha-form>
+    `;
+  }
+
+  _renderEntitiesEditor() {
+    return html`
       <hui-entities-card-row-editor
         .hass=${this.hass}
         .entities=${this._config.entities}
@@ -531,6 +505,58 @@ class CoverSliderCardEditor extends LitElement {
       ></hui-entities-card-row-editor>
     `;
   }
+
+  _renderVisualsEditor() {
+    return html`
+      <ha-form
+        .hass=${this.hass}
+        .data=${this._config}
+        .schema=${[
+          {
+            name: "layout",
+            label: "Button layout",
+            selector: {
+              select: { options: ["full", "compact", "stop", "minimal"] },
+            },
+          },
+          { name: "hideNames", label: "Hide names?", selector: { boolean: {} } },
+          { name: "titleSize", label: "Title size in px (default: 14)", selector: { number: {} } },
+          { name: "sliderWidth", label: "Slider width in px (default: 40)", selector: { number: {} } },
+          { name: "sliderHeight", label: "Slider height in px (default: 200)", selector: { number: {} } },
+          { name: "openColor", label: "Open color", selector: { text: {} } },
+          { name: "closedColor", label: "Closed color", selector: { text: {} } },
+        ]}
+        .computeLabel=${this._computeLabel}
+        @value-changed=${this._valuesChanged}
+      ></ha-form>
+    `;
+  }
+
+  _renderContent() {
+    if (this._selectedTab === 0 && this._editingEntity !== null) {
+      return this._renderEntityEditor();
+    }
+
+    return [this._renderEntitiesEditor, this._renderVisualsEditor][this._selectedTab].bind(this)();
+  }
+
+  render() {
+    if (!this.hass || !this._config) {
+      return html``;
+    }
+
+    return html`
+      <div class="card-config">
+        <div class="toolbar">
+          <mwc-tab-bar .activeIndex=${this._selectedTab} @MDCTabBar:activated=${this._handleSwitchTab}>
+            <mwc-tab .label=${"Entities"}></mwc-tab>
+            <mwc-tab .label=${"Visuals"}></mwc-tab>
+          </mwc-tab-bar>
+        </div>
+        <div id="editor">${this._renderContent()}</div>
+      </div>
+    `;
+  }
 }
 
-customElements.define('cover-slider-card-editor', CoverSliderCardEditor);
+customElements.define("cover-slider-card-editor", CoverSliderCardEditor);

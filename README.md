@@ -10,15 +10,16 @@ The card has a visual editor, but all configuration options are detailed below.
 
 ## Options
 
-| Name           | Type    | Default      | Description                  |
-| -------------- | ------- | ------------ | ---------------------------- |
-| type           | string  | **Required** | `custom:cover-slider-card`   |
-| entities       | array   | **Required** | Entities configured as below |
-| hideNames      | boolean | false        | Hides names of entities      |
-| hideDirections | boolean | false        | Hides up/down buttons        |
-| hideStop       | boolean | false        | Hides stop button            |
-| sliderWidth    | number  | 40           | Width of slider in px        |
-| sliderHeight   | number  | 200          | Height of sliders in px      |
+| Name         | Type    | Default      | Description                                  |
+| ------------ | ------- | ------------ | -------------------------------------------- |
+| type         | string  | **Required** | `custom:cover-slider-card`                   |
+| entities     | array   | **Required** | Entities configured as below                 |
+| layout       | string  | full         | Layout: `full`, `compact`, `stop`, `minimal` |
+| hideNames    | boolean | false        | Hides names of entities                      |
+| sliderWidth  | number  | 40           | Width of slider in px                        |
+| sliderHeight | number  | 200          | Height of sliders in px                      |
+| openColor    | string  |              | Color used for open area                     |
+| closedColor  | string  |              | Color used for closed area                   |
 
 ## Entity options
 
@@ -56,22 +57,25 @@ entities:
 type: custom:cover-slider-card
 entities:
   - entity: cover.cover_1
-    name: 'South 1'
+    name: "South 1"
     step: 10
+    invert: True
   - entity: cover.cover_2
-    name: 'South 2'
+    name: "South 2"
     step: 10
+    invert: True
   - entity: cover.cover_3
-    name: 'West 1'
+    name: "West 1"
     step: 10
   - entity: cover.cover_4
-    name: 'West 2'
+    name: "West 2"
     step: 10
+layout: full
 hideNames: false
-hideDirections: false
-hideStop: false
 sliderWidth: 40
 sliderHeight: 200
+openColor:
+closedColor:
 ```
 
 ## Known issues
