@@ -420,7 +420,7 @@ if (!customElements.get("cover-slider-card")) {
     documentationURL: "https://github.com/tolnai/hacs_cover_slider",
   });
   console.info(
-    "%c Cover Slider Card  \n%c Version v0.1.3",
+    "%c Cover Slider Card  \n%c Version v0.1.4",
     "color: orange; font-weight: bold; background: black",
     "color: white; font-weight: bold; background: dimgray"
   );
@@ -533,7 +533,15 @@ class CoverSliderCardEditor extends LitElement {
             name: "layout",
             label: "Button layout",
             selector: {
-              select: { options: ["full", "compact", "stop", "minimal"], mode: "dropdown" },
+              select: {
+                options: [
+                  { label: "Full (all buttons)", value: "full" },
+                  { label: "Compact (stop appears during movement)", value: "compact" },
+                  { label: "Stop (only Stop button)", value: "stop" },
+                  { label: "Minimal (no buttons)", value: "minimal" },
+                ],
+                mode: "dropdown",
+              },
             },
           },
           { name: "hideNames", label: "Hide names?", selector: { boolean: {} } },
