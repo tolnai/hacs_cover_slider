@@ -80,7 +80,6 @@ class CoverSliderCard extends LitElement {
   }
 
   _coverStop(state) {
-    console.log(state);
     this.hass.callService("cover", "stop_cover", {
       entity_id: state.entity_id,
     });
@@ -103,7 +102,6 @@ class CoverSliderCard extends LitElement {
   }
 
   _openEntity(entityId) {
-    console.log(entityId);
     this._fire("hass-more-info", { entityId });
   }
 
@@ -120,13 +118,6 @@ class CoverSliderCard extends LitElement {
 
   static get styles() {
     return css`
-      :host([is-panel]) ha-card {
-        left: 50;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-      }
       ha-card {
         overflow: hidden;
         width: 100%;
@@ -134,34 +125,26 @@ class CoverSliderCard extends LitElement {
         display: flex;
         justify-content: center;
       }
-      .page {
-        width: 100%;
-        height: 100%;
+      .main {
         display: flex;
-        flex-direction: row;
-        padding: 16px;
-      }
-      .page > .main {
+        height: 100%;
+        margin: auto;
+        padding: 16px 16px 6px 16px;
         width: 100%;
+        justify-content: space-around;
         overflow-x: scroll;
-        padding-bottom: 0px;
         -ms-overflow-style: none; /* IE and Edge */
         scrollbar-width: none; /* Firefox */
       }
-      .page > .main::-webkit-scrollbar {
-        display: none;
-      }
-      .page > .main > .inner-main {
-        display: flex;
+      .direction-vertical {
         flex-direction: row;
         align-items: center;
-        height: 100%;
-        margin: auto;
-        padding-right: 0px;
-        width: 100%;
-        justify-content: space-around;
       }
-      .page > .main > .inner-main > .cover {
+      .direction-horizontal,
+      .direction-horizontal-invert {
+        flex-direction: column;
+      }
+      .cover {
         width: var(--cover-width);
         display: inline-block;
         margin: var(--center-slider);
@@ -169,56 +152,78 @@ class CoverSliderCard extends LitElement {
         flex: 1 1 0px;
       }
 
-      .cover .icon {
-        margin: 0 auto;
-        text-align: center;
-        display: block;
-        height: 50px;
-        width: 50px;
-        color: rgba(255, 255, 255, 0.3);
-        font-size: 30px;
-        padding-top: 5px;
-      }
-      .cover .icon ha-icon {
-        width: 30px;
-        height: 30px;
-        text-align: center;
-      }
-      .cover .icon.on ha-icon {
-        fill: #f7d959;
-      }
       .cover-name {
-        display: var(--show-name);
         font-weight: 300;
+        font-size: var(--cover-fontSize);
+        cursor: pointer;
+      }
+      .direction-vertical .cover-name {
         margin-top: calc(var(--cover-fontSize) / 3);
         margin-bottom: calc(var(--cover-fontSize) / 2);
         text-align: center;
-        font-size: var(--cover-fontSize);
       }
+      .direction-horizontal .cover-name,
+      .direction-horizontal-invert .cover-name {
+        flex-grow: 2;
+      }
+
+      .cover-slider {
+        display: flex;
+        align-items: center;
+      }
+      .direction-vertical .cover-slider {
+        flex-direction: column;
+      }
+      .direction-horizontal .cover-slider,
+      .direction-horizontal-invert .cover-slider {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
       .range-holder {
-        height: var(--slider-height);
         position: relative;
-        display: block;
       }
+      .direction-vertical .range-holder {
+        height: var(--slider-height);
+      }
+      .direction-horizontal .range-holder,
+      .direction-horizontal-invert .range-holder {
+        height: var(--slider-width);
+      }
+
       .range-holder input[type="range"] {
         outline: 0;
         border: 0;
         border-radius: 4px;
-        width: var(--slider-height);
         margin: 0;
         transition: box-shadow 0.2s ease-in-out;
+        overflow: hidden;
+        -webkit-appearance: none;
+        background-color: var(--closed-color);
+      }
+      .direction-vertical .range-holder input[type="range"] {
+        width: var(--slider-height);
+        height: var(--slider-width);
+        position: absolute;
+        top: calc(50% - (var(--slider-width) / 2));
+        right: calc(50% - (var(--slider-height) / 2));
         -webkit-transform: rotate(270deg);
         -moz-transform: rotate(270deg);
         -o-transform: rotate(270deg);
         -ms-transform: rotate(270deg);
         transform: rotate(270deg);
-        overflow: hidden;
+      }
+      .direction-horizontal .range-holder input[type="range"],
+      .direction-horizontal-invert .range-holder input[type="range"] {
+        width: var(--slider-height);
         height: var(--slider-width);
-        -webkit-appearance: none;
-        background-color: var(--closed-color);
-        position: absolute;
-        top: calc(50% - (var(--slider-width) / 2));
-        right: calc(50% - (var(--slider-height) / 2));
+      }
+      .direction-horizontal .range-holder input[type="range"] {
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        transform: rotate(180deg);
       }
       .range-holder input[type="range"]::-webkit-slider-runnable-track {
         height: var(--slider-width);
@@ -228,7 +233,7 @@ class CoverSliderCard extends LitElement {
         transition: box-shadow 0.2s ease-in-out;
       }
       .range-holder input[type="range"]::-webkit-slider-thumb {
-        width: calc((var(--slider-width) / 5) + 2px);
+        width: 10px;
         border-right: 4px solid var(--closed-color);
         border-left: 4px solid var(--closed-color);
         border-top: 10px solid var(--closed-color);
@@ -243,40 +248,38 @@ class CoverSliderCard extends LitElement {
         position: relative;
         top: 0;
       }
+
       .toggle {
-        display: var(--show-switch);
         align-items: center;
         justify-content: center;
-      }
-      .toggle > input.toggle-btn {
-        display: none;
       }
     `;
   }
 
   _renderName(ent, stateObj) {
-    const hideNames = this.config.hideNames ? this.config.hideNames : false;
+    const hideNames = this.config.hideNames || false;
     const titleSize = this.config.titleSize ? `${this.config.titleSize}px` : "14px";
+    if (hideNames) {
+      return html``;
+    }
     return html`
-      <p
-        class="cover-name"
-        style="display: ${hideNames ? "none" : "block"};--cover-fontSize: ${titleSize};"
-        @click=${(e) => this._openEntity(stateObj.entity_id)}
-      >
+      <p class="cover-name" style="--cover-fontSize:${titleSize};" @click=${() => this._openEntity(stateObj.entity_id)}>
         ${ent.name || stateObj.attributes.friendly_name}
       </p>
     `;
   }
 
   _renderUpButton(ent, stateObj) {
-    const layout = this.config.layout ? this.config.layout : "full";
+    const layout = this.config.layout || "full";
+    const upIcon = ent.upIcon || this.config.upIcon || "mdi:arrow-up";
+    const upLabel = ent.upLabel || this.config.upLabel || "Up";
     const ongoing = stateObj.state === (ent.invert ? "closing" : "opening");
     switch (layout) {
       case "full":
         return html`
           <div class="toggle" style="margin: 0;">
-            <ha-icon-button label="Up" @click=${() => this._coverOpen(ent, stateObj)} style="display: block">
-              <ha-icon icon="mdi:arrow-up"></ha-icon>
+            <ha-icon-button label="${upLabel}" @click=${() => this._coverOpen(ent, stateObj)} style="display: block">
+              <ha-icon icon="${upIcon}"></ha-icon>
             </ha-icon-button>
           </div>
         `;
@@ -284,11 +287,11 @@ class CoverSliderCard extends LitElement {
         return html`
           <div class="toggle" style="margin: 0;">
             <ha-icon-button
-              label="${ongoing ? "Stop" : "Up"}"
+              label="${ongoing ? "Stop" : upLabel}"
               @click=${() => this._coverOpen(ent, stateObj)}
               style="display: block"
             >
-              <ha-icon icon="${ongoing ? "mdi:stop" : "mdi:arrow-up"}"></ha-icon>
+              <ha-icon icon="${ongoing ? "mdi:stop" : upIcon}"></ha-icon>
             </ha-icon-button>
           </div>
         `;
@@ -300,14 +303,16 @@ class CoverSliderCard extends LitElement {
   }
 
   _renderDownButton(ent, stateObj) {
-    const layout = this.config.layout ? this.config.layout : "full";
+    const layout = this.config.layout || "full";
+    const downIcon = ent.downIcon || this.config.downIcon || "mdi:arrow-down";
+    const downLabel = ent.downLabel || this.config.downLabel || "Down";
     const ongoing = stateObj.state === (ent.invert ? "opening" : "closing");
     switch (layout) {
       case "full":
         return html`
           <div class="toggle" style="margin: 0;">
-            <ha-icon-button label="Down" @click=${() => this._coverClose(ent, stateObj)} style="display: block">
-              <ha-icon icon="mdi:arrow-down"></ha-icon>
+            <ha-icon-button label="${downLabel}" @click=${() => this._coverClose(ent, stateObj)} style="display: block">
+              <ha-icon icon="${downIcon}"></ha-icon>
             </ha-icon-button>
           </div>
         `;
@@ -315,11 +320,11 @@ class CoverSliderCard extends LitElement {
         return html`
           <div class="toggle" style="margin: 0;">
             <ha-icon-button
-              label="${ongoing ? "Stop" : "Down"}"
+              label="${ongoing ? "Stop" : downLabel}"
               @click=${() => this._coverClose(ent, stateObj)}
               style="display: block"
             >
-              <ha-icon icon="${ongoing ? "mdi:stop" : "mdi:arrow-down"}"></ha-icon>
+              <ha-icon icon="${ongoing ? "mdi:stop" : downIcon}"></ha-icon>
             </ha-icon-button>
           </div>
         `;
@@ -331,7 +336,7 @@ class CoverSliderCard extends LitElement {
   }
 
   _renderStopButton(stateObj) {
-    const layout = this.config.layout ? this.config.layout : "full";
+    const layout = this.config.layout || "full";
     switch (layout) {
       case "full":
       case "stop":
@@ -355,17 +360,20 @@ class CoverSliderCard extends LitElement {
     const sliderHeight =
       this.config.sliderHeight && this.config.sliderHeight >= 30 ? `${this.config.sliderHeight}px` : "200px";
 
-    const openColor = this.config.openColor ? this.config.openColor : "hsl(0, 0%, 90%, 0.6)";
-    const closedColor = this.config.closedColor ? this.config.closedColor : "hsl(0, 0%, 20%)";
+    const openColor = ent.openColor || this.config.openColor || "hsl(0, 0%, 90%, 0.6)";
+    const closedColor = ent.closedColor || this.config.closedColor || "hsl(0, 0%, 20%)";
 
-    const step = ent.step ? ent.step : 5;
+    const step = ent.step || this.config.step || 5;
     return html`
-      <div class="range-holder" style="--slider-height: ${sliderHeight};--closed-color: ${closedColor};">
+      <div
+        class="range-holder"
+        style="--slider-width:${sliderWidth};--slider-height:${sliderHeight};--closed-color:${closedColor};"
+      >
         <input
           type="range"
           class="${stateObj.state}"
           step="${step}"
-          style="--slider-width: ${sliderWidth};--slider-height: ${sliderHeight};--closed-color: ${closedColor};--open-color: ${openColor};"
+          style="--slider-width:${sliderWidth};--slider-height:${sliderHeight};--closed-color:${closedColor};--open-color:${openColor};"
           .value="${stateObj.state === "closed"
             ? ent.invert
               ? 100
@@ -380,29 +388,29 @@ class CoverSliderCard extends LitElement {
     `;
   }
 
+  _renderCover(ent) {
+    const stateObj = this.hass.states[ent.entity];
+    if (!stateObj) {
+      return html``;
+    }
+    return html`
+      <div class="cover" style="--cover-width:30;--center-slider:30;">
+        <div class="cover-slider" style="">
+          ${this._renderName(ent, stateObj)} ${this._renderUpButton(ent, stateObj)} ${this._renderSlider(ent, stateObj)}
+          ${this._renderDownButton(ent, stateObj)} ${this._renderStopButton(stateObj)}
+        </div>
+      </div>
+    `;
+  }
+
   render() {
+    const direction = this.config.direction || "vertical";
+
     return html`
       <ha-card>
-        <div class="page">
-          <div class="main">
-            <div class="inner-main">
-              ${this.config.entities.length === 0 ? html` You need to define entities ` : ""}
-              ${this.config.entities.map((ent) => {
-                const stateObj = this.hass.states[ent.entity];
-                return stateObj
-                  ? html`
-                      <div class="cover" style="--cover-width:30;--center-slider:30;">
-                        <div class="cover-slider" style="display: flex; flex-direction: column; align-items: center;">
-                          ${this._renderName(ent, stateObj)} ${this._renderUpButton(ent, stateObj)}
-                          ${this._renderSlider(ent, stateObj)} ${this._renderDownButton(ent, stateObj)}
-                          ${this._renderStopButton(stateObj)}
-                        </div>
-                      </div>
-                    `
-                  : html``;
-              })}
-            </div>
-          </div>
+        <div class="main direction-${direction}">
+          ${this.config.entities.length === 0 ? html` You need to define entities ` : ""}
+          ${this.config.entities.map((ent) => this._renderCover(ent))}
         </div>
       </ha-card>
     `;
@@ -420,7 +428,7 @@ if (!customElements.get("cover-slider-card")) {
     documentationURL: "https://github.com/tolnai/hacs_cover_slider",
   });
   console.info(
-    "%c Cover Slider Card  \n%c Version v0.1.4",
+    "%c Cover Slider Card  \n%c Version v0.2.0",
     "color: orange; font-weight: bold; background: black",
     "color: white; font-weight: bold; background: dimgray"
   );
@@ -459,7 +467,6 @@ class CoverSliderCardEditor extends LitElement {
   }
 
   _valuesChanged(ev) {
-    console.log(ev.detail);
     this._config = ev.detail.value;
     this._publishConfig();
   }
@@ -503,8 +510,14 @@ class CoverSliderCardEditor extends LitElement {
         .schema=${[
           { name: "entity", label: "Entity", selector: { entity: { domain: "cover" } } },
           { name: "name", label: "Name", selector: { text: {} } },
-          { name: "step", label: "Slider step size (default: 5)", selector: { number: {} } },
           { name: "invert", label: "Invert position?", selector: { boolean: {} } },
+          { name: "step", label: "Slider step size (default: 5)", selector: { number: {} } },
+          { name: "openColor", label: "Open color", selector: { text: {} } },
+          { name: "closedColor", label: "Closed color", selector: { text: {} } },
+          { name: "upIcon", label: "Upper/left icon", selector: { icon: {} } },
+          { name: "downIcon", label: "Lower/right icon", selector: { icon: {} } },
+          { name: "upLabel", label: "Upper/left icon label", selector: { text: {} } },
+          { name: "downLabel", label: "Lower/right icon label", selector: { text: {} } },
         ]}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._entityChanged}
@@ -530,6 +543,20 @@ class CoverSliderCardEditor extends LitElement {
         .data=${this._config}
         .schema=${[
           {
+            name: "direction",
+            label: "Slider direction",
+            selector: {
+              select: {
+                options: [
+                  { label: "Horizontal (left-to-right)", value: "horizontal" },
+                  { label: "Horizontal (right-to-left)", value: "horizontal-invert" },
+                  { label: "Vertical", value: "vertical" },
+                ],
+                mode: "dropdown",
+              },
+            },
+          },
+          {
             name: "layout",
             label: "Button layout",
             selector: {
@@ -547,9 +574,14 @@ class CoverSliderCardEditor extends LitElement {
           { name: "hideNames", label: "Hide names?", selector: { boolean: {} } },
           { name: "titleSize", label: "Title size in px (default: 14)", selector: { number: {} } },
           { name: "sliderWidth", label: "Slider width in px (default: 40)", selector: { number: {} } },
-          { name: "sliderHeight", label: "Slider height in px (default: 200)", selector: { number: {} } },
-          { name: "openColor", label: "Open color", selector: { text: {} } },
-          { name: "closedColor", label: "Closed color", selector: { text: {} } },
+          { name: "sliderHeight", label: "Slider length in px (default: 200)", selector: { number: {} } },
+          { name: "step", label: "Default slider step size (default: 5)", selector: { number: {} } },
+          { name: "openColor", label: "Default open color", selector: { text: {} } },
+          { name: "closedColor", label: "Default closed color", selector: { text: {} } },
+          { name: "upIcon", label: "Default upper/left icon", selector: { icon: {} } },
+          { name: "downIcon", label: "Default lower/right icon", selector: { icon: {} } },
+          { name: "upLabel", label: "Default upper/left icon label", selector: { text: {} } },
+          { name: "downLabel", label: "Default lower/right icon label", selector: { text: {} } },
         ]}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._valuesChanged}

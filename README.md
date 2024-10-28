@@ -1,6 +1,6 @@
 # Cover Slider card for Home Assistant
 
-This is a custom card loaded via HACS into Home Assistant, which shows sliders for cover type entities.
+This is a custom card loaded via HACS into Home Assistant, which shows sliders for cover type entities. Sliders can go both vertically and horizontally.
 
 The card has a visual editor, but all configuration options are detailed below.
 
@@ -8,27 +8,43 @@ The card has a visual editor, but all configuration options are detailed below.
 
 ![Basic example](images/basic.png)
 
+![Vertical example](images/vertical.png)
+
+![Horizontal example](images/horizontal.png)
+
 ## Options
 
-| Name         | Type    | Default      | Description                                  |
-| ------------ | ------- | ------------ | -------------------------------------------- |
-| type         | string  | **Required** | `custom:cover-slider-card`                   |
-| entities     | array   | **Required** | Entities configured as below                 |
-| layout       | string  | full         | Layout: `full`, `compact`, `stop`, `minimal` |
-| hideNames    | boolean | false        | Hides names of entities                      |
-| sliderWidth  | number  | 40           | Width of slider in px                        |
-| sliderHeight | number  | 200          | Height of sliders in px                      |
-| openColor    | string  |              | Color used for open area                     |
-| closedColor  | string  |              | Color used for closed area                   |
+| Name         | Type    | Default          | Description                                                      |
+| ------------ | ------- | ---------------- | ---------------------------------------------------------------- |
+| type         | string  | **Required**     | `custom:cover-slider-card`                                       |
+| entities     | array   | **Required**     | Entities configured as below                                     |
+| direction    | string  | `vertical`       | Slider direction: `vertical`, `horizontal`, `horizontal-invert`  |
+| layout       | string  | `full`           | Layout: `full`, `compact`, `stop`, `minimal`                     |
+| hideNames    | boolean | `false`          | Hides names of entities. Not recommended for horizontal sliders. |
+| sliderWidth  | number  | `40`             | Width of sliders in px                                           |
+| sliderHeight | number  | `200`            | Length of sliders in px                                          |
+| step         | number  | `5`              | Default slider step size (you'll get 100/step positions)         |
+| openColor    | string  |                  | Default color used for open area                                 |
+| closedColor  | string  |                  | Default color used for closed area                               |
+| upIcon       | icon    | `mdi:arrow-up`   | Default upper/left icon                                          |
+| downIcon     | icon    | `mdi:arrow-down` | Default lower/right icon                                         |
+| upLabel      | string  | `Up`             | Default label of upper/left icon                                 |
+| downLabel    | string  | `Down`           | Default label of lower/right icon                                |
 
 ## Entity options
 
-| Name   | Type    | Default       | Description                                                             |
-| ------ | ------- | ------------- | ----------------------------------------------------------------------- |
-| entity | entity  | **Required**  | Cover entity                                                            |
-| name   | string  | entity's name | Show this name instead entity's name                                    |
-| step   | number  | 5             | Slider step (with 5, position can be set in 5 increments between 0-100) |
-| invert | boolean | false         | Inverts 0/100 position values                                           |
+| Name        | Type    | Default          | Description                                      |
+| ----------- | ------- | ---------------- | ------------------------------------------------ |
+| entity      | entity  | **Required**     | Cover entity                                     |
+| name        | string  | entity's name    | Show this name instead entity's name             |
+| invert      | boolean | `false`          | Inverts 0/100 position values                    |
+| step        | number  | `5`              | Slider step size (you'll get 100/step positions) |
+| openColor   | string  |                  | Individual color used for open area              |
+| closedColor | string  |                  | Individual color used for closed area            |
+| upIcon      | icon    | `mdi:arrow-up`   | Individual upper/left icon                       |
+| downIcon    | icon    | `mdi:arrow-down` | Individual lower/right icon                      |
+| upLabel     | string  | `Up`             | Individual label of upper/left icon              |
+| downLabel   | string  | `Down`           | Individual label of lower/right icon             |
 
 ## Installation
 
@@ -41,7 +57,7 @@ Prefered method of installation is [Home Assistant Community Store](https://gith
 
 ## Examples
 
-### Basic
+### Basic example
 
 ```yaml
 type: custom:cover-slider-card
@@ -52,31 +68,59 @@ entities:
   - entity: cover.cover_4
 ```
 
-### Full
+### Horizontal example
+
+```yaml
+type: custom:cover-slider-card
+entities:
+  - entity: cover.shade_1
+    name: "Kitchen"
+  - entity: cover.shade_2
+    name: "Living room"
+direction: horizontal-invert
+layout: compact
+step: 5
+upIcon: mdi:arrow-collapse-horizontal
+downIcon: mdi:arrow-expand-horizontal
+upLabel: In
+downLabel: Out
+```
+
+### Full example
 
 ```yaml
 type: custom:cover-slider-card
 entities:
   - entity: cover.cover_1
     name: "South 1"
-    step: 10
     invert: True
+    step: 10
   - entity: cover.cover_2
     name: "South 2"
-    step: 10
     invert: True
+    step: 10
   - entity: cover.cover_3
     name: "West 1"
-    step: 10
   - entity: cover.cover_4
     name: "West 2"
-    step: 10
+  - entity: cover.covers_group
+    name: "All"
+    openColor: ""
+    closedColor: hsl(200, 20%, 20%)
+    upIcon: mdi:arrow-up-bold
+    downIcon: mdi:arrow-down-bold
+    upLabel: All up
+    downLabel: All down
+direction: vertical
 layout: full
 hideNames: false
 sliderWidth: 40
 sliderHeight: 200
-openColor:
-closedColor:
+step: 5
+openColor: ""
+closedColor: ""
+upIcon: mdi-arrow-left
+downIcon: mdi:arrow-right
 ```
 
 ## Credits
