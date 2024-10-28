@@ -36,6 +36,7 @@ Prefered method of installation is [Home Assistant Community Store](https://gith
 
 - Open HACS in Home Assistant, Click the "..." menu, Custom repositories
 - Cope the URL of this repo (<https://github.com/tolnai/hacs_cover_slider>) and press Add
+- Search for "cover slider", pick "Cover Slider card" from the list, press Download
 - After reloading the page, the card will be available in the card picker
 
 ## Examples
