@@ -2,9 +2,9 @@
  * Author        : Gabor Tolnai
  * Github        : https://github.com/tolnai/hacs_cover_slider
  * Description   : Cover slider card
- * Date          : 2024-10-28
+ * Date          : 2025-03-20 - updated lit-element dependency version
  */
-import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-element.js?module";
+import { LitElement, html, css } from "https://unpkg.com/lit-element@4.1.1/lit-element.js?module";
 
 const loadHaForm = async () => {
   if (customElements.get("ha-form") && customElements.get("hui-entities-card-editor")) return;
@@ -428,7 +428,7 @@ if (!customElements.get("cover-slider-card")) {
     documentationURL: "https://github.com/tolnai/hacs_cover_slider",
   });
   console.info(
-    "%c Cover Slider Card  \n%c Version v0.2.0",
+    "%c Cover Slider Card  \n%c Version v0.3.0",
     "color: orange; font-weight: bold; background: black",
     "color: white; font-weight: bold; background: dimgray"
   );

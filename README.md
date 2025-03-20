@@ -123,6 +123,12 @@ upIcon: mdi-arrow-left
 downIcon: mdi:arrow-right
 ```
 
+## Changelog
+
+### v0.3.0
+
+Updating lit-element dependency, the card doesn't appear otherwise.
+
 ## Credits
 
 Inspired by [Vertical Slider Cover Card](https://github.com/konnectedvn/lovelace-vertical-slider-cover-card) by [konnectedvn](https://github.com/konnectedvn).
