@@ -1,6 +1,6 @@
 {
   "name": "hacs_cover_slider",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Cover Slider card for Home Assistant",
   "keywords": [
     "home-assistant",
@@ -15,7 +15,39 @@
   "repository": "https://github.com/tolnai/hacs_cover_slider",
   "author": "Gábor Tolnai",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
-    "lit-element": "^2.8.0"
-  }
+    "custom-card-helpers": "1.9.0",
+    "lit": "2.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-decorators": "^7.14.5",
+    "@eslint/js": "9.21.0",
+    "@rollup/plugin-babel": "^6.0.0",
+    "@rollup/plugin-image": "^3.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "9.21.0",
+    "eslint-config-prettier": "10.0.2",
+    "eslint-plugin-jest": "28.11.0",
+    "rollup": "^4.0.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-gzip": "^4.0.0",
+    "rollup-plugin-serve": "^3.0.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "5.8.2",
+    "typescript-eslint": "8.26.0"
+  },
+  "scripts": {
+    "start": "rollup -c rollup.config.dev.js --watch",
+    "build": "yarn rollup",
+    "lint": "eslint **/*.ts --max-warnings 0",
+    "rollup": "rollup -c"
+  },
+  "packageManager": "yarn@4.7.0"
 }
