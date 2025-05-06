@@ -147,7 +147,12 @@ export class CoverSliderCard extends LitElement {
     if (this.hass && this.config && ev.detail.action) {
       ev.preventDefault();
       ev.stopPropagation();
-      handleAction(this, this.hass, ent.tap_action ? ent : this.config, ev.detail.action);
+      handleAction(
+        this,
+        this.hass,
+        ent.tap_action ? ent : this.config.tap_action ? this.config : { ...ent, tap_action: { action: 'more-info' } as ActionConfig },
+        ev.detail.action,
+      );
     }
   }
 
