@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.1 (2025-05-06)
+
+🪲 Fixes:
+
+- bring back default "more-info" action when tapping on cover name
+
 ## v0.4.0 (2025-05-05)
 
 ⚙️ Complete internal refactor.

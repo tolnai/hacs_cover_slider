@@ -2,7 +2,6 @@
  * Author        : Gábor Tolnai
  * Github        : https://github.com/tolnai/hacs_cover_slider
  * Description   : Cover slider card
- * Date          : 2025-05-05 - refactor + supporting actions + compact smart layout
  */
 import { LitElement, html, type TemplateResult, type CSSResultGroup } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
