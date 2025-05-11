@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.0 (2025-05-11)
+
+⚠️ BREAKING CHANGES:
+
+- Config editor might not work with earlier versions of HA. Only upgrade after upgrading to HA 2025.5!
+
+🪲 Fixes:
+
+- make compatible with HA 2025.5 (config editor tabs)
+
 ## v0.4.1 (2025-05-06)
 
 🪲 Fixes:

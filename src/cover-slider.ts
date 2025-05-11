@@ -446,7 +446,7 @@ export class CoverSliderCardEditor extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @state() private _config!: CoverConfig;
-  @state() private _selectedTab = 0;
+  @state() private _selectedTab = 'entities';
   @state() private _editingEntity: { index: number; elementConfig: ElementConfig } | null = null;
 
   constructor() {
@@ -506,7 +506,7 @@ export class CoverSliderCardEditor extends LitElement {
   }
 
   _handleSwitchTab(ev: CustomEvent) {
-    this._selectedTab = parseInt(ev.detail.index, 10);
+    this._selectedTab = ev.detail.name;
   }
 
   _editDetails(ev: CustomEvent) {
@@ -726,11 +726,17 @@ export class CoverSliderCardEditor extends LitElement {
   }
 
   _renderContent() {
-    if (this._selectedTab === 0 && this._editingEntity !== null) {
+    if (this._selectedTab === 'entities' && this._editingEntity !== null) {
       return this._renderEntityEditor();
     }
 
-    return [this._renderEntitiesEditor, this._renderVisualsEditor][this._selectedTab].bind(this)();
+    if (this._selectedTab === 'entities') {
+      return this._renderEntitiesEditor();
+    }
+    if (this._selectedTab === 'configuration') {
+      return this._renderVisualsEditor();
+    }
+    return html``;
   }
 
   render() {
@@ -741,10 +747,10 @@ export class CoverSliderCardEditor extends LitElement {
     return html`
       <div class="card-config">
         <div class="toolbar">
-          <mwc-tab-bar .activeIndex=${this._selectedTab} @MDCTabBar:activated=${this._handleSwitchTab}>
-            <mwc-tab .label=${'Cover Entities'}></mwc-tab>
-            <mwc-tab .label=${'Configuration'}></mwc-tab>
-          </mwc-tab-bar>
+          <sl-tab-group @sl-tab-show=${this._handleSwitchTab}>
+            <sl-tab slot="nav" panel="entities" .active=${this._selectedTab === 'entities'}>Cover Entities</sl-tab>
+            <sl-tab slot="nav" panel="configuration" .active=${this._selectedTab === 'configuration'}>Configuration</sl-tab>
+          </sl-tab-group>
         </div>
         <div id="editor">${this._renderContent()}</div>
       </div>
