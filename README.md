@@ -19,26 +19,29 @@ The card has a visual editor, but all configuration options are detailed below.
 
 ## Options
 
-| Name              | Type    | Default          | Description                                                      |
-| ----------------- | ------- | ---------------- | ---------------------------------------------------------------- |
-| type              | string  | **Required**     | `custom:cover-slider-card`                                       |
-| entities          | array   | **Required**     | Entities configured as below                                     |
-| direction         | string  | `vertical`       | Slider direction: `vertical`, `horizontal`, `horizontal-invert`  |
-| layout            | string  | `full`           | Layout: `full`, `compact`, `stop`, `minimal`                     |
-| hideNames         | boolean | `false`          | Hides names of entities. Not recommended for horizontal sliders. |
-| titleSize         | number  | `14`             | Title size in px                                                 |
-| sliderWidth       | number  | `40`             | Width of sliders in px                                           |
-| sliderHeight      | number  | `200`            | Length of sliders in px                                          |
-| step              | number  | `5`              | Default slider step size (you'll get 100/step positions)         |
-| openColor         | string  |                  | Default color used for open area                                 |
-| closedColor       | string  |                  | Default color used for closed area                               |
-| upIcon            | icon    | `mdi:arrow-up`   | Default upper/left icon                                          |
-| downIcon          | icon    | `mdi:arrow-down` | Default lower/right icon                                         |
-| upLabel           | string  | `Up`             | Default label of upper/left icon                                 |
-| downLabel         | string  | `Down`           | Default label of lower/right icon                                |
-| tap_action        | action  |                  | Default tap action                                               |
-| hold_action       | action  |                  | Default hold action                                              |
-| double_tap_action | action  |                  | Default default tap action                                       |
+| Name               | Type    | Default             | Description                                                      |
+| ------------------ | ------- | ------------------- | ---------------------------------------------------------------- |
+| type               | string  | **Required**        | `custom:cover-slider-card`                                       |
+| entities           | array   | **Required**        | Entities configured as below                                     |
+| direction          | string  | `vertical`          | Slider direction: `vertical`, `horizontal`, `horizontal-invert`  |
+| layout             | string  | `full`              | Layout: `full`, `compact`, `stop`, `minimal`                     |
+| hideNames          | boolean | `false`             | Hides names of entities. Not recommended for horizontal sliders. |
+| titleSize          | number  | `14`                | Title size in px                                                 |
+| percentageSize     | number  | `10`                | Percentage size in px                                            |
+| sliderWidth        | number  | `40`                | Width of sliders in px                                           |
+| sliderHeight       | number  | `200`               | Length of sliders in px                                          |
+| step               | number  | `5`                 | Default slider step size (you'll get 100/step positions)         |
+| showPercentage     | boolean | `false`             | Display current percentage                                       |
+| percentagePosition | string  | `besides` / `under` | Show percentage `besides` or `under` name? Default is `besides` for horizontal direction and `under` for vertical direction. |
+| openColor          | string  |                     | Default color used for open area                                 |
+| closedColor        | string  |                     | Default color used for closed area                               |
+| upIcon             | icon    | `mdi:arrow-up`      | Default upper/left icon                                          |
+| downIcon           | icon    | `mdi:arrow-down`    | Default lower/right icon                                         |
+| upLabel            | string  | `Up`                | Default label of upper/left icon                                 |
+| downLabel          | string  | `Down`              | Default label of lower/right icon                                |
+| tap_action         | action  |                     | Default tap action                                               |
+| hold_action        | action  |                     | Default hold action                                              |
+| double_tap_action  | action  |                     | Default default tap action                                       |
 
 The meaning of layouts:
 
@@ -71,7 +74,7 @@ This card supports actions, which can be triggered by tapping on the cover names
 
 ## Installation
 
-Prefered method of installation is [Home Assistant Community Store](https://github.com/hacs/integration).
+Preferred method of installation is [Home Assistant Community Store](https://github.com/hacs/integration).
 
 - Open HACS in Home Assistant, Click the "..." menu, Custom repositories
 - Cope the URL of this repo (<https://github.com/tolnai/hacs_cover_slider>) and press Add
@@ -118,6 +121,8 @@ entities:
     name: 'South 1'
     invert: True
     step: 10
+    tap_action:
+      action: none
   - entity: cover.cover_2
     name: 'South 2'
     invert: True
@@ -140,10 +145,19 @@ hideNames: false
 sliderWidth: 40
 sliderHeight: 200
 step: 5
+showPercentage: true
+percentagePosition: under
 openColor: ''
 closedColor: ''
 upIcon: mdi-arrow-left
 downIcon: mdi:arrow-right
+upLabel: 'Up'
+downLabel: 'Down'
+titleSize: 14
+percentageSize: 10
+tap_action:
+  action: navigate
+  navigation_path: /mypage
 ```
 
 ## Credits

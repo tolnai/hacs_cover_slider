@@ -1,6 +1,6 @@
 {
   "name": "hacs_cover_slider",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Cover Slider card for Home Assistant",
   "keywords": [
     "home-assistant",

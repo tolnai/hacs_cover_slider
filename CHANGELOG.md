@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.1 (2025-05-14)
+
+🚀 New features:
+
+- ability to show percentage (besides or under name)
+
 ## v0.5.0 (2025-05-11)
 
 ⚠️ BREAKING CHANGES:

@@ -19,7 +19,7 @@ import editStyles from './styles-edit';
 import { actionHandler } from './ha-action-handler-directive';
 import { version } from '../package.json';
 
-const DEV = false;
+const DEV = true;
 
 export type ElementConfig = {
   entity: string;
@@ -46,6 +46,8 @@ type CoverConfig = {
   sliderWidth?: number;
   sliderHeight?: number;
   step?: number;
+  showPercentage?: boolean;
+  percentagePosition?: 'besides' | 'under';
   openColor?: string;
   closedColor?: string;
   upIcon?: string;
@@ -53,6 +55,7 @@ type CoverConfig = {
   upLabel?: string;
   downLabel?: string;
   titleSize?: number;
+  percentageSize?: number;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
@@ -237,11 +240,18 @@ export class CoverSliderCard extends LitElement {
   }
 
   _renderName(ent: ElementConfig, stateObj: HassEntity) {
-    const hideNames = this.config.hideNames || false;
-    const titleSize = this.config.titleSize ? `${this.config.titleSize}px` : '14px';
-    if (hideNames) {
+    if (this.config.hideNames) {
       return html``;
     }
+    const titleSize = this.config.titleSize ? `${this.config.titleSize}px` : '14px';
+    const percentageSize = this.config.percentageSize ? `${this.config.percentageSize}px` : '10px';
+    const percentagePosition = this.config.percentagePosition ?? (this.config.direction === 'vertical' ? 'under' : 'besides');
+    const position = html`
+      ${percentagePosition === 'under' ? html`<br />` : ''}
+      <span class="cover-percentage" style="--percentage-fontSize:${percentageSize};">
+        ${this._physicalToLogicalPosition(ent, stateObj)}%
+      </span>
+    `;
     return html`
       <p
         class="cover-name"
@@ -254,7 +264,7 @@ export class CoverSliderCard extends LitElement {
           hasDoubleClick: hasAction(ent.double_tap_action || this.config.double_tap_action),
         })}
       >
-        ${ent.name || stateObj.attributes.friendly_name}
+        ${ent.name || stateObj.attributes.friendly_name} ${this.config.showPercentage ? position : ''}
       </p>
     `;
   }
@@ -653,6 +663,7 @@ export class CoverSliderCardEditor extends LitElement {
           .data=${this._config}
           .schema=${[
             { name: 'titleSize', label: 'Title size in px (default: 14)', selector: { number: {} } },
+            { name: 'percentageSize', label: 'Percentage size in px (default: 10)', selector: { number: {} } },
             { name: 'sliderWidth', label: 'Slider width in px (default: 40)', selector: { number: {} } },
             { name: 'sliderHeight', label: 'Slider length in px (default: 200)', selector: { number: {} } },
           ]}
@@ -671,6 +682,14 @@ export class CoverSliderCardEditor extends LitElement {
               name: 'step',
               label: 'Default slider step size (default: 5)',
               selector: { number: {} },
+            },
+            { name: 'showPercentage', label: 'Show percentage?', selector: { boolean: {} } },
+            { name: 'percentagePosition', label: 'Percentage position', selector: { select: {
+              options: [
+                { label: 'Besides name', value: 'besides' },
+                { label: 'Under name', value: 'under' },
+              ],
+              mode: 'dropdown', } },
             },
             {
               name: 'openColor',

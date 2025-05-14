@@ -38,7 +38,11 @@ export default css`
   .cover-name {
     font-weight: 300;
     font-size: var(--cover-fontSize);
+    line-height: var(--cover-fontSize);
     cursor: pointer;
+  }
+  .cover-name .cover-percentage {
+    font-size: var(--percentage-fontSize);
   }
   .direction-vertical .cover-name {
     margin-top: var(--cover-fontSize);
