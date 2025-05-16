@@ -9,6 +9,8 @@ This is a custom card loaded via [HACS](https://hacs.xyz) into Home Assistant, w
 
 The card has a visual editor, but all configuration options are detailed below.
 
+Check out my other work at [https://github.com/tolnai/home_assistant_cookbook](https://github.com/tolnai/home_assistant_cookbook).
+
 ## Samples
 
 ![Basic example](images/basic.png)

@@ -19,7 +19,7 @@ import editStyles from './styles-edit';
 import { actionHandler } from './ha-action-handler-directive';
 import { version } from '../package.json';
 
-const DEV = true;
+const DEV = false;
 
 export type ElementConfig = {
   entity: string;
