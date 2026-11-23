@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1 (2026-11-23)
+
+🪲 Fixes:
+
+- 0.6.0 was accidentally released as a development build (registered as `custom:cover-slider-card-dev`), breaking existing dashboards
+
 ## v0.6.0 (2026-11-23)
 
 🚀 New features:
