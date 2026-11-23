@@ -356,10 +356,10 @@ export class CoverSliderCard extends LitElement {
   }
 
   _renderCover(ent: ElementConfig) {
-    const stateObj = this.hass.states[ent.entity];
-    if (!stateObj) {
-      return html``;
-    }
+    // Entity not (yet) available: render it as unavailable with the same layout, so the card size does not change.
+    const stateObj: HassEntity =
+      this.hass.states[ent.entity] ??
+      ({ entity_id: ent.entity, state: 'unavailable', attributes: {} } as unknown as HassEntity);
     return html`
       <div class="cover">
         <div class="cover-slider">
