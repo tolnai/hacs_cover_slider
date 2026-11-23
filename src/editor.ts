@@ -88,8 +88,23 @@ export class CoverSliderCardEditor extends LitElement {
     this.dispatchEvent(event);
   }
 
-  _handleSwitchTab(ev: CustomEvent) {
-    this._selectedTab = ev.detail.name;
+  _selectTab(tab: string) {
+    this._selectedTab = tab;
+  }
+
+  // Own tab bar: HA's internal tab components changed twice already (sl-tab -> ha-tab-group), breaking the editor.
+  _renderTab(tab: string, label: string) {
+    const active = this._selectedTab === tab;
+    return html`
+      <button
+        class="tab ${active ? 'active' : ''}"
+        role="tab"
+        aria-selected=${active}
+        @click=${() => this._selectTab(tab)}
+      >
+        ${label}
+      </button>
+    `;
   }
 
   _editDetails(ev: CustomEvent) {
@@ -348,11 +363,8 @@ export class CoverSliderCardEditor extends LitElement {
 
     return html`
       <div class="card-config">
-        <div class="toolbar">
-          <sl-tab-group @sl-tab-show=${this._handleSwitchTab}>
-            <sl-tab slot="nav" panel="entities" .active=${this._selectedTab === 'entities'}>Cover Entities</sl-tab>
-            <sl-tab slot="nav" panel="configuration" .active=${this._selectedTab === 'configuration'}>Configuration</sl-tab>
-          </sl-tab-group>
+        <div class="toolbar" role="tablist">
+          ${this._renderTab('entities', 'Cover Entities')} ${this._renderTab('configuration', 'Configuration')}
         </div>
         <div id="editor">${this._renderContent()}</div>
       </div>
