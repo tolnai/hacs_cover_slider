@@ -1,27 +1,21 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
-import { babel } from '@rollup/plugin-babel';
-import serve from 'rollup-plugin-serve';
-import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
-import image from '@rollup/plugin-image';
+import serve from 'rollup-plugin-serve';
 
 export default {
-  input: ['src/cover-slider.ts'],
+  input: 'src/cover-slider.ts',
   output: {
-    dir: './dist',
+    dir: 'dist',
     format: 'es',
+    sourcemap: true,
   },
   plugins: [
-    image(),
     nodeResolve(),
-    typescript(),
+    commonjs(),
+    typescript({ sourceMap: true }),
     json(),
-    babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'bundled',
-    }),
-    terser(),
     serve({
       contentBase: './dist',
       host: '0.0.0.0',
@@ -31,7 +25,4 @@ export default {
       },
     }),
   ],
-  onwarn(warning, warn) {
-    warn(warning);
-  },
 };

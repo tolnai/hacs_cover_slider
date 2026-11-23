@@ -21,33 +21,28 @@
     "lit": "2.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/plugin-proposal-decorators": "^7.14.5",
-    "@eslint/js": "9.21.0",
-    "@rollup/plugin-babel": "^6.0.0",
-    "@rollup/plugin-image": "^3.0.0",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-terser": "^0.4.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "eslint": "9.21.0",
-    "eslint-config-prettier": "10.0.2",
-    "eslint-plugin-jest": "28.11.0",
-    "rollup": "^4.0.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-gzip": "^4.0.0",
-    "rollup-plugin-serve": "^3.0.0",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "5.8.2",
-    "typescript-eslint": "8.26.0"
+    "@eslint/js": "10.0.1",
+    "@rollup/plugin-commonjs": "29.0.3",
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-terser": "1.0.2",
+    "@rollup/plugin-typescript": "12.3.1",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.14.0",
+    "prettier": "3.9.10",
+    "rollup": "4.68.2",
+    "rollup-plugin-gzip": "4.2.1",
+    "rollup-plugin-serve": "3.0.0",
+    "tslib": "2.9.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2"
   },
   "scripts": {
     "start": "rollup -c rollup.config.dev.js --watch",
-    "build": "yarn rollup",
-    "lint": "eslint **/*.ts --max-warnings 0",
-    "rollup": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint src",
+    "format": "prettier --write src"
   },
   "packageManager": "yarn@4.7.0"
 }
