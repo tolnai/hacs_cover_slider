@@ -9,7 +9,6 @@ import {
   type HomeAssistant,
   hasAction,
   type ActionHandlerEvent,
-  handleAction,
   type ActionConfig,
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 import { type HassEntity } from 'home-assistant-js-websocket';
@@ -32,6 +31,7 @@ export type ElementConfig = {
   downIcon?: string;
   upLabel?: string;
   downLabel?: string;
+  disableSlider?: boolean;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
@@ -56,6 +56,7 @@ type CoverConfig = {
   downLabel?: string;
   titleSize?: number;
   percentageSize?: number;
+  disableSlider?: boolean;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
@@ -103,7 +104,9 @@ export class CoverSliderCard extends LitElement {
   @state() private config!: CoverConfig;
   @state() private error?: TemplateResult;
 
-  private sliderVal: Record<string, { val: number; active: boolean }> = {};
+  // Slider value set by the user. Shown instead of the entity state while dragging (active),
+  // and after release until the next state update arrives (stamp = last_updated at release).
+  private sliderVal: Record<string, { val: number; active: boolean; stamp?: string }> = {};
 
   constructor() {
     super();
@@ -121,6 +124,7 @@ export class CoverSliderCard extends LitElement {
     if (!config) {
       throw this.createError('Invalid configuration.');
     }
+    this.error = undefined;
     if (!config.entities) {
       throw this.createError('You need to define entities.');
     }
@@ -149,12 +153,16 @@ export class CoverSliderCard extends LitElement {
     if (this.hass && this.config && ev.detail.action) {
       ev.preventDefault();
       ev.stopPropagation();
-      handleAction(
-        this,
-        this.hass,
-        ent.tap_action ? ent : this.config.tap_action ? this.config : { ...ent, tap_action: { action: 'more-info' } as ActionConfig },
-        ev.detail.action,
-      );
+      // Let Home Assistant execute the action: supports every action type (perform-action, confirmation, ...).
+      this._fire('hass-action', {
+        config: {
+          entity: ent.entity,
+          tap_action: ent.tap_action ?? this.config.tap_action ?? { action: 'more-info' },
+          hold_action: ent.hold_action ?? this.config.hold_action,
+          double_tap_action: ent.double_tap_action ?? this.config.double_tap_action,
+        },
+        action: ev.detail.action,
+      });
     }
   }
 
@@ -176,14 +184,16 @@ export class CoverSliderCard extends LitElement {
   }
 
   _setPosition(ent: ElementConfig, entity_id: string, value: number) {
-    if (this.hass.states[entity_id].attributes.current_position === value) {
+    const stateObj = this.hass.states[entity_id];
+    this.sliderVal[entity_id] = { val: value, active: false, stamp: stateObj.last_updated };
+    const position = ent.invert ? 100 - value : value;
+    if (stateObj.attributes.current_position === position) {
       return;
     }
     this.hass.callService('cover', 'set_cover_position', {
       entity_id: entity_id,
-      position: ent.invert ? 100 - value : value,
+      position,
     });
-    this.sliderVal[entity_id]['active'] = false;
     /*if (ent.script) {
       this.hass.callService('script', 'turn_on', {
         entity_id: ent.script,
@@ -390,10 +400,16 @@ export class CoverSliderCard extends LitElement {
 
     const step = ent.step || this.config.step || 5;
 
-    const sliderValue = this._physicalToLogicalPosition(ent, stateObj);
+    const disableSlider = ent.disableSlider ?? this.config.disableSlider ?? false;
+
+    const userValue = this.sliderVal[stateObj.entity_id];
+    const sliderValue =
+      userValue && (userValue.active || userValue.stamp === stateObj.last_updated)
+        ? userValue.val
+        : this._physicalToLogicalPosition(ent, stateObj);
     return html`
       <div
-        class="range-holder"
+        class="range-holder${disableSlider ? ' no-drag' : ''}"
         style="--slider-width:${sliderWidth};--slider-height:${sliderHeight};--closed-color:${closedColor};"
       >
         <input
@@ -404,8 +420,8 @@ export class CoverSliderCard extends LitElement {
           max="100"
           style="--slider-width:${sliderWidth};--slider-height:${sliderHeight};--closed-color:${closedColor};--open-color:${openColor};"
           .value="${sliderValue}"
-          @input="${(e) => this._sliderChange(e.target.value, stateObj.entity_id)}}"
-          @change=${(e) => this._setPosition(ent, stateObj.entity_id, e.target.value)}
+          @input="${(e) => this._sliderChange(Number(e.target.value), stateObj.entity_id)}"
+          @change=${(e) => this._setPosition(ent, stateObj.entity_id, Number(e.target.value))}
         />
       </div>
     `;
@@ -491,9 +507,7 @@ export class CoverSliderCardEditor extends LitElement {
   }
 
   _entitiesChanged(ev: CustomEvent) {
-    const _config = Object.assign({}, this._config);
-    _config.entities = ev.detail.entities;
-    this._config = _config;
+    this._config = { ...this._config, entities: ev.detail.entities };
     this._publishConfig();
   }
 
@@ -501,8 +515,11 @@ export class CoverSliderCardEditor extends LitElement {
     if (!this._editingEntity) {
       return;
     }
-    this._config.entities[this._editingEntity.index] = ev.detail.value;
-    this._editingEntity.elementConfig = ev.detail.value;
+    // Config objects from Home Assistant may be frozen: never mutate, always copy.
+    const entities = [...this._config.entities];
+    entities[this._editingEntity.index] = ev.detail.value;
+    this._config = { ...this._config, entities };
+    this._editingEntity = { ...this._editingEntity, elementConfig: ev.detail.value };
     this._publishConfig();
   }
 
@@ -551,6 +568,11 @@ export class CoverSliderCardEditor extends LitElement {
               name: 'step',
               label: 'Slider step size (default: 5)',
               selector: { number: {} },
+            },
+            {
+              name: 'disableSlider',
+              label: 'Disable dragging the slider (buttons only)',
+              selector: { boolean: {} },
             },
             { name: 'openColor', label: 'Open color', selector: { text: {} } },
             { name: 'closedColor', label: 'Closed color', selector: { text: {} } },
@@ -682,6 +704,11 @@ export class CoverSliderCardEditor extends LitElement {
               name: 'step',
               label: 'Default slider step size (default: 5)',
               selector: { number: {} },
+            },
+            {
+              name: 'disableSlider',
+              label: 'Disable dragging sliders (buttons only, prevents accidental moves while scrolling)',
+              selector: { boolean: {} },
             },
             { name: 'showPercentage', label: 'Show percentage?', selector: { boolean: {} } },
             { name: 'percentagePosition', label: 'Percentage position', selector: { select: {

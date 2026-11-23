@@ -112,6 +112,10 @@ export default css`
     -ms-transform: rotate(180deg);
     transform: rotate(180deg);
   }
+  /* Slider shows position only: touches pass through, so page scrolling cannot move a cover. */
+  .range-holder.no-drag input[type='range'] {
+    pointer-events: none;
+  }
   .range-holder input[type='range']::-webkit-slider-runnable-track {
     height: var(--slider-width);
     -webkit-appearance: none;

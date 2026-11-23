@@ -33,6 +33,7 @@ Check out my other work at [https://github.com/tolnai/home_assistant_cookbook](h
 | sliderWidth        | number  | `40`                | Width of sliders in px                                           |
 | sliderHeight       | number  | `200`               | Length of sliders in px                                          |
 | step               | number  | `5`                 | Default slider step size (you'll get 100/step positions)         |
+| disableSlider      | boolean | `false`             | Slider cannot be dragged, only shows position (use buttons). Prevents accidental moves while scrolling on mobile. |
 | showPercentage     | boolean | `false`             | Display current percentage                                       |
 | percentagePosition | string  | `besides` / `under` | Show percentage `besides` or `under` name? Default is `besides` for horizontal direction and `under` for vertical direction. |
 | openColor          | string  |                     | Default color used for open area                                 |
@@ -64,6 +65,7 @@ This card supports actions, which can be triggered by tapping on the cover names
 | name              | string  | entity's name    | Show this name instead entity's name             |
 | invert            | boolean | `false`          | Inverts 0/100 position values                    |
 | step              | number  | `5`              | Slider step size (you'll get 100/step positions) |
+| disableSlider     | boolean | `false`          | Slider cannot be dragged, only shows position    |
 | openColor         | string  |                  | Individual color used for open area              |
 | closedColor       | string  |                  | Individual color used for closed area            |
 | upIcon            | icon    | `mdi:arrow-up`   | Individual upper/left icon                       |
