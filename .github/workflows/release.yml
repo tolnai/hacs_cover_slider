@@ -46,6 +46,13 @@ jobs:
             exit 1
           fi
 
+      - name: Check this is not a DEV build
+        run: |
+          if ! grep -q "export const DEV = false;" src/const.ts; then
+            echo "::error::src/const.ts has DEV enabled; the card would register as cover-slider-card-dev"
+            exit 1
+          fi
+
       - name: Extract release notes from CHANGELOG.md
         run: |
           awk -v ver="$TAG" '
