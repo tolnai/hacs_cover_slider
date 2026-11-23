@@ -5,17 +5,12 @@
  */
 import { LitElement, html, type TemplateResult, type CSSResultGroup } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import {
-  type HomeAssistant,
-  hasAction,
-  type ActionHandlerEvent,
-  type ActionConfig,
-} from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
-import { type HassEntity } from 'home-assistant-js-websocket';
+import type { HassEntity } from 'home-assistant-js-websocket';
 
 import styles from './styles';
 import editStyles from './styles-edit';
 import { actionHandler } from './ha-action-handler-directive';
+import { type HomeAssistant, type ActionConfig, type ActionHandlerEvent, hasAction } from './types';
 import { version } from '../package.json';
 
 const DEV = false;
