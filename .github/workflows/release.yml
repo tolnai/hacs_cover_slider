@@ -4,11 +4,17 @@
 #   1. set "version" in package.json to the new version
 #   2. add a "## vX.Y.Z (date)" section to CHANGELOG.md (it becomes the release notes)
 #   3. commit, then: git tag X.Y.Z && git push origin main X.Y.Z
+# Can also be started by hand (Actions -> Release -> Run workflow) for an existing tag.
 name: Release
 
 on:
   push:
     tags: ['[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release (e.g. 0.6.0)'
+        required: true
 
 permissions:
   contents: write
@@ -16,8 +22,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ env.TAG }}
       - run: corepack enable
       - uses: actions/setup-node@v5
         with:
@@ -31,20 +41,20 @@ jobs:
       - name: Check package.json version matches the tag
         run: |
           version=$(node -p "require('./package.json').version")
-          if [ "$version" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::package.json version ($version) does not match tag ($GITHUB_REF_NAME)"
+          if [ "$version" != "$TAG" ]; then
+            echo "::error::package.json version ($version) does not match tag ($TAG)"
             exit 1
           fi
 
       - name: Extract release notes from CHANGELOG.md
         run: |
-          awk -v ver="$GITHUB_REF_NAME" '
+          awk -v ver="$TAG" '
             $0 ~ "^## v" ver "( |$)" { found = 1; next }
             found && /^## / { exit }
             found { print }
           ' CHANGELOG.md > release-notes.md
           if [ ! -s release-notes.md ]; then
-            echo "::error::No '## v$GITHUB_REF_NAME' section in CHANGELOG.md"
+            echo "::error::No '## v$TAG' section in CHANGELOG.md"
             exit 1
           fi
 
@@ -53,4 +63,4 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/cover-slider.js --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+        run: gh release create "$TAG" dist/cover-slider.js --title "$TAG" --notes-file release-notes.md
