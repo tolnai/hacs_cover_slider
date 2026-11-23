@@ -14,6 +14,9 @@ import { DEV, CARD_TAG, EDITOR_TAG } from './const';
 import './editor';
 import { version } from '../package.json';
 
+// CoverEntityFeature.SET_POSITION
+const SUPPORT_SET_POSITION = 4;
+
 console.info(
   `%c Cover Slider Card${DEV ? ' DEV' : ''} \n%c Version v${version}`,
   'color: orange; font-weight: bold; background: black',
@@ -65,8 +68,28 @@ export class CoverSliderCard extends LitElement {
     this.config = config;
   }
 
+  // Estimated card height in px, used for masonry (getCardSize) and sections (getGridOptions) layouts.
+  private _estimateHeight(): number {
+    const config = this.config;
+    const sliderWidth = config.sliderWidth && config.sliderWidth >= 10 ? config.sliderWidth : 40;
+    const sliderHeight = config.sliderHeight && config.sliderHeight >= 30 ? config.sliderHeight : 200;
+    const padding = 12;
+    if ((config.direction ?? 'vertical') !== 'vertical') {
+      return padding + config.entities.length * (Math.max(48, sliderWidth) + 8);
+    }
+    const buttons = { full: 3, compact: 2, 'compact-smart': 2, stop: 1, minimal: 0 }[config.layout ?? 'full'] ?? 3;
+    const name = config.hideNames ? 0 : 2 * (config.titleSize ?? 14) + (config.showPercentage ? 14 : 0);
+    return padding + name + buttons * 48 + sliderHeight;
+  }
+
   public getCardSize() {
-    return 3;
+    return Math.ceil(this._estimateHeight() / 50);
+  }
+
+  // Sections view: 12 columns, one row is 56px + 8px gap.
+  public getGridOptions() {
+    const rows = Math.ceil((this._estimateHeight() + 8) / 64);
+    return { columns: 12, rows };
   }
 
   private handleAction(ev: ActionHandlerEvent, ent: ElementConfig): void {
@@ -185,15 +208,14 @@ export class CoverSliderCard extends LitElement {
   }
 
   _physicalToLogicalPosition(ent: ElementConfig, stateObj: HassEntity) {
-    const sliderValue =
-      stateObj.state === 'closed'
-        ? ent.invert
-          ? 100
-          : 0
-        : ent.invert
-        ? 100 - Math.round(stateObj.attributes.current_position)
-        : Math.round(stateObj.attributes.current_position);
-    return sliderValue;
+    // Covers without position support have no current_position: derive it from the open/closed state.
+    const current = stateObj.attributes.current_position as number | undefined;
+    const physical = stateObj.state === 'closed' ? 0 : current === undefined ? 100 : Math.round(current);
+    return ent.invert ? 100 - physical : physical;
+  }
+
+  _supportsSetPosition(stateObj: HassEntity) {
+    return ((stateObj.attributes.supported_features ?? 0) & SUPPORT_SET_POSITION) !== 0;
   }
 
   _renderUpButton(ent: ElementConfig, stateObj: HassEntity) {
@@ -305,7 +327,8 @@ export class CoverSliderCard extends LitElement {
 
     const step = ent.step || this.config.step || 5;
 
-    const disableSlider = ent.disableSlider ?? this.config.disableSlider ?? false;
+    const disableSlider =
+      !this._supportsSetPosition(stateObj) || (ent.disableSlider ?? this.config.disableSlider ?? false);
 
     const userValue = this.sliderVal[stateObj.entity_id];
     const sliderValue =

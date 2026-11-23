@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+🚀 New features:
+
+- `disableSlider` option (global and per entity): the slider only shows the position, so scrolling on mobile cannot move a cover by accident
+- sections view support (card size is estimated from the configuration)
+
+🪲 Fixes:
+
+- `perform-action` and every other action type works now (actions are handled by Home Assistant)
+- global hold/double tap actions are no longer lost when an entity has its own tap action
+- config editor no longer mutates the configuration
+- card recovers after an invalid configuration is fixed
+- slider does not jump back while dragging a moving cover
+- covers without position support show open/closed state and their slider cannot be dragged
+- slider styling in Firefox
+
+🧹 Maintenance:
+
+- updated build toolchain, lit 3, removed `custom-card-helpers`
+
 ## v0.5.1 (2025-05-14)
 
 🚀 New features:
