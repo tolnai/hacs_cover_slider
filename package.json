@@ -17,7 +17,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "lit": "2.8.0"
+    "lit": "3.3.3"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
