@@ -16,8 +16,7 @@ export default css`
     width: 100%;
     justify-content: space-around;
     overflow-x: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
   .direction-vertical {
     flex-direction: row;
@@ -28,10 +27,7 @@ export default css`
     flex-direction: column;
   }
   .cover {
-    width: var(--cover-width);
     display: inline-block;
-    margin: var(--center-slider);
-    padding-bottom: 0px;
     flex: 1 1 0px;
   }
 
@@ -85,7 +81,7 @@ export default css`
     margin: 0;
     transition: box-shadow 0.2s ease-in-out;
     overflow: hidden;
-    -webkit-appearance: none;
+    appearance: none;
     background-color: var(--closed-color);
   }
   .direction-vertical .range-holder input[type='range'] {
@@ -94,10 +90,6 @@ export default css`
     position: absolute;
     top: calc(50% - (var(--slider-width) / 2));
     right: calc(50% - (var(--slider-height) / 2));
-    -webkit-transform: rotate(270deg);
-    -moz-transform: rotate(270deg);
-    -o-transform: rotate(270deg);
-    -ms-transform: rotate(270deg);
     transform: rotate(270deg);
   }
   .direction-horizontal .range-holder input[type='range'],
@@ -106,10 +98,6 @@ export default css`
     height: var(--slider-width);
   }
   .direction-horizontal .range-holder input[type='range'] {
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
     transform: rotate(180deg);
   }
   /* Slider shows position only: touches pass through, so page scrolling cannot move a cover. */
@@ -138,6 +126,26 @@ export default css`
     transition: box-shadow 0.2s ease-in-out;
     position: relative;
     top: 0;
+  }
+  /* Firefox: progress fills the open part, thumb mimics the WebKit one. */
+  .range-holder input[type='range']::-moz-range-track {
+    height: var(--slider-width);
+    background: transparent;
+  }
+  .range-holder input[type='range']::-moz-range-progress {
+    height: var(--slider-width);
+    background: var(--open-color);
+  }
+  .range-holder input[type='range']::-moz-range-thumb {
+    box-sizing: border-box;
+    width: 18px;
+    height: var(--slider-width);
+    border-width: 10px 4px;
+    border-style: solid;
+    border-color: var(--closed-color);
+    border-radius: 0;
+    background: var(--open-color);
+    cursor: ew-resize;
   }
 
   .toggle {
