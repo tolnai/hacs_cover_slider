@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.0 (2026-11-23)
 
 🚀 New features:
 
@@ -11,14 +11,14 @@
 
 - `perform-action` and every other action type works now (actions are handled by Home Assistant)
 - global hold/double tap actions are no longer lost when an entity has its own tap action
-- config editor no longer mutates the configuration
 - card recovers after an invalid configuration is fixed
 - slider does not jump back while dragging a moving cover
 - covers without position support show open/closed state and their slider cannot be dragged
 - slider styling in Firefox
 
-🧹 Maintenance:
+🧹 Maintenance, refactor:
 
+- config editor no longer mutates the configuration
 - updated build toolchain, lit 3, removed `custom-card-helpers`
 
 ## v0.5.1 (2025-05-14)
