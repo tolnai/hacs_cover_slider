@@ -16,35 +16,35 @@ interface ActionHandlerElement extends HTMLElement {
   };
 }
 
-type ActionHandlerOptions = any;
+interface ActionHandlerOptions {
+  hasHold?: boolean;
+  hasDoubleClick?: boolean;
+  disabled?: boolean;
+}
 
 const getActionHandler = (): ActionHandler => {
-  const body = document.body;
-  if (body.querySelector('action-handler')) {
-    return body.querySelector('action-handler') as ActionHandler;
+  const existing = document.body.querySelector<ActionHandler>('action-handler');
+  if (existing) {
+    return existing;
   }
-
-  const actionhandler = document.createElement('action-handler');
-  body.appendChild(actionhandler);
-
-  return actionhandler as ActionHandler;
+  const actionhandler = document.createElement('action-handler') as ActionHandler;
+  document.body.appendChild(actionhandler);
+  return actionhandler;
 };
 
 export const actionHandlerBind = (element: ActionHandlerElement, options?: ActionHandlerOptions) => {
-  const actionhandler: ActionHandler = getActionHandler();
-  if (!actionhandler) {
-    return;
-  }
-  actionhandler.bind(element, options);
+  getActionHandler().bind(element, options);
 };
 
 export const actionHandler = directive(
   class extends Directive {
     update(part: AttributePart, [options]: DirectiveParameters<this>) {
-      actionHandlerBind(part.element as ActionHandlerElement, options);
+      actionHandlerBind(part.element, options);
       return noChange;
     }
 
-    render(_options?: ActionHandlerOptions) {}
+    render(_options?: ActionHandlerOptions) {
+      return noChange;
+    }
   },
 );

@@ -10,7 +10,7 @@ export default tseslint.config(
   // apply default config
   prettierConfig,
   eslint.configs.recommended,
-  tseslint.configs.strictTypeChecked,
+  tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylisticTypeChecked,
   // default language/parser options
   {
@@ -31,6 +31,14 @@ export default tseslint.config(
   {
     rules: {
       "no-console": "warn",
+      // Lit binds event listeners in templates to the host element, so unbound methods are safe there.
+      "@typescript-eslint/unbound-method": "off",
+      "@typescript-eslint/no-confusing-void-expression": ["error", { ignoreArrowShorthand: true }],
+      // Empty strings / zero from the config editor should fall back to defaults, so `||` is intended for them.
+      "@typescript-eslint/prefer-nullish-coalescing": [
+        "error",
+        { ignorePrimitives: { string: true, number: true, boolean: true } },
+      ],
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",

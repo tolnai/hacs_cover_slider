@@ -151,7 +151,11 @@ export default css`
   }
 
   .toggle {
+    margin: 0;
     align-items: center;
     justify-content: center;
+  }
+  .toggle ha-icon-button {
+    display: block;
   }
 `;

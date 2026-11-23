@@ -15,9 +15,9 @@ export interface ActionConfig {
 
 export type ActionHandlerEvent = CustomEvent<{ action: 'tap' | 'hold' | 'double_tap' }>;
 
-export const hasAction = (config?: ActionConfig): boolean => config !== undefined && config.action !== 'none';
+export type Layout = 'full' | 'compact' | 'compact-smart' | 'stop' | 'minimal';
 
-export type ElementConfig = {
+export interface ElementConfig {
   entity: string;
   name?: string;
   invert?: boolean;
@@ -32,12 +32,12 @@ export type ElementConfig = {
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
-};
+}
 
-export type CoverConfig = {
+export interface CoverConfig {
   entities: ElementConfig[];
   direction?: 'vertical' | 'horizontal' | 'horizontal-invert';
-  layout: 'full' | 'compact' | 'compact-smart' | 'stop' | 'minimal';
+  layout?: Layout;
   hideNames?: boolean;
   sliderWidth?: number;
   sliderHeight?: number;
@@ -56,4 +56,20 @@ export type CoverConfig = {
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
-};
+}
+
+// Card picker registry and HA card helpers on window.
+declare global {
+  interface Window {
+    customCards?: {
+      type: string;
+      name: string;
+      description?: string;
+      preview?: boolean;
+      documentationURL?: string;
+    }[];
+    loadCardHelpers?: () => Promise<{
+      createCardElement(config: Record<string, unknown>): Promise<HTMLElement | undefined>;
+    }>;
+  }
+}

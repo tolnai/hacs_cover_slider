@@ -5,25 +5,19 @@ import editStyles from './styles-edit';
 import type { HomeAssistant, CoverConfig, ElementConfig } from './types';
 import { EDITOR_TAG } from './const';
 
-// Extend the Window interface to include loadCardHelpers
-declare global {
-  interface Window {
-    loadCardHelpers?: () => Promise<any>;
-  }
-}
-
 // ha-form and hui-entities-card-row-editor (the multi-entity list editor) are lazy-loaded by Home Assistant.
 // Creating an entities card and asking for its editor forces HA to load them, so this editor can use them.
 const loadHaForm = async () => {
   if (customElements.get('ha-form') && customElements.get('hui-entities-card-editor')) return;
-  if (window.loadCardHelpers) {
-    const helpers = await window.loadCardHelpers();
-    if (!helpers) return;
-    const card = await helpers.createCardElement({ type: 'entities', entities: [] });
-    if (!card) return;
-    card.constructor.getConfigElement();
-  }
+  const helpers = await window.loadCardHelpers?.();
+  const card = await helpers?.createCardElement({ type: 'entities', entities: [] });
+  await (card?.constructor as { getConfigElement?: () => Promise<unknown> } | undefined)?.getConfigElement?.();
 };
+
+interface SchemaItem {
+  name: string;
+  label?: string;
+}
 
 const actions: string[] = ['navigate', 'url', 'perform-action', 'none'];
 
@@ -37,7 +31,7 @@ export class CoverSliderCardEditor extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    loadHaForm();
+    void loadHaForm();
   }
 
   setConfig(config: CoverConfig) {
@@ -49,25 +43,25 @@ export class CoverSliderCardEditor extends LitElement {
     return editStyles;
   }
 
-  _backClick(_e: Event) {
+  _backClick() {
     this._editingEntity = null;
   }
 
-  _computeLabel(e) {
-    return e.label || e.name;
+  _computeLabel(item: SchemaItem) {
+    return item.label || item.name;
   }
 
-  _valuesChanged(ev: CustomEvent) {
+  _valuesChanged(ev: CustomEvent<{ value: CoverConfig }>) {
     this._config = ev.detail.value;
     this._publishConfig();
   }
 
-  _entitiesChanged(ev: CustomEvent) {
+  _entitiesChanged(ev: CustomEvent<{ entities: ElementConfig[] }>) {
     this._config = { ...this._config, entities: ev.detail.entities };
     this._publishConfig();
   }
 
-  _entityChanged(ev: CustomEvent) {
+  _entityChanged(ev: CustomEvent<{ value: ElementConfig }>) {
     if (!this._editingEntity) {
       return;
     }
@@ -107,13 +101,13 @@ export class CoverSliderCardEditor extends LitElement {
     `;
   }
 
-  _editDetails(ev: CustomEvent) {
+  _editDetails(ev: CustomEvent<{ subElementConfig: { index: number; elementConfig: ElementConfig } }>) {
     this._editingEntity = ev.detail.subElementConfig;
   }
 
   _renderEntityEditor() {
     return html`
-      <div><ha-icon-button-prev @click=${(e) => this._backClick(e)} /> Back</div>
+      <div><ha-icon-button-prev @click=${this._backClick}></ha-icon-button-prev> Back</div>
       <div class="box">
         <h3>Entity</h3>
         <ha-form
