@@ -282,12 +282,18 @@ export class CoverSliderCardEditor extends LitElement {
               selector: { boolean: {} },
             },
             { name: 'showPercentage', label: 'Show percentage?', selector: { boolean: {} } },
-            { name: 'percentagePosition', label: 'Percentage position', selector: { select: {
-              options: [
-                { label: 'Besides name', value: 'besides' },
-                { label: 'Under name', value: 'under' },
-              ],
-              mode: 'dropdown', } },
+            {
+              name: 'percentagePosition',
+              label: 'Percentage position',
+              selector: {
+                select: {
+                  options: [
+                    { label: 'Besides name', value: 'besides' },
+                    { label: 'Under name', value: 'under' },
+                  ],
+                  mode: 'dropdown',
+                },
+              },
             },
             {
               name: 'openColor',

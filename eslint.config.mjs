@@ -45,10 +45,6 @@ export default tseslint.config(
   {
     files: rootConfigFiles,
     ...tseslint.configs.disableTypeChecked,
-    languageOptions: { sourceType: "commonjs" },
-    rules: {
-      ...tseslint.configs.disableTypeChecked.rules,
-      "@typescript-eslint/no-require-imports": "off",
-    },
+    rules: tseslint.configs.disableTypeChecked.rules,
   }
 );

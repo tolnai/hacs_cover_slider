@@ -183,7 +183,8 @@ export class CoverSliderCard extends LitElement {
     }
     const titleSize = this.config.titleSize ? `${this.config.titleSize}px` : '14px';
     const percentageSize = this.config.percentageSize ? `${this.config.percentageSize}px` : '10px';
-    const percentagePosition = this.config.percentagePosition ?? (this.config.direction === 'vertical' ? 'under' : 'besides');
+    const percentagePosition =
+      this.config.percentagePosition ?? (this.config.direction === 'vertical' ? 'under' : 'besides');
     const position = html`
       ${percentagePosition === 'under' ? html`<br />` : ''}
       <span class="cover-percentage" style="--percentage-fontSize:${percentageSize};">

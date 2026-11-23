@@ -121,7 +121,9 @@ export default css`
     height: var(--slider-width);
     cursor: ew-resize;
     background: var(--closed-color);
-    box-shadow: -350px 0 0 350px var(--open-color), inset 0 0 0 80px var(--open-color);
+    box-shadow:
+      -350px 0 0 350px var(--open-color),
+      inset 0 0 0 80px var(--open-color);
     border-radius: 0;
     transition: box-shadow 0.2s ease-in-out;
     position: relative;
